@@ -20,6 +20,12 @@
 #include "main.h"
 #include "usb_device.h"
 
+#include "realMain.h"
+#include "usbd_cdc_if.h"
+#include <string.h>
+#include <stdio.h>
+#include <math.h>
+
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -49,7 +55,16 @@ TIM_HandleTypeDef htim13;
 TIM_HandleTypeDef htim14;
 
 /* USER CODE BEGIN PV */
+uint16_t fastPPM_ONTime = 1500;//ON time in microseconds
+uint16_t fastPPM_OFFTime = fastPPM_Pulselength - fastPPM_ONTime;//OFF time in microseconds
+uint8_t fastPPM_powered = 0;
 
+uint16_t slowPPM1_ONTime = 1500;//ON time in microseconds
+uint16_t slowPPM1_OFFTime = fastPPM_Pulselength - fastPPM_ONTime;//OFF time in microseconds
+uint8_t slowPPM1_powered = 0;
+
+void ADC_Select_Channel_11();
+void ADC_Select_Channel_12();
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -100,23 +115,27 @@ int main(void)
   MX_GPIO_Init();
   MX_ADC1_Init();
   MX_I2C1_Init();
+  MX_USB_DEVICE_Init();
   MX_TIM11_Init();
   MX_TIM13_Init();
   MX_TIM14_Init();
-  MX_USB_DEVICE_Init();
+
 
   /* Initialize interrupts */
   MX_NVIC_Init();
   /* USER CODE BEGIN 2 */
-
+  // HAL_TIM_Base_Start_IT(&htim14);
+  HAL_TIM_Base_Start_IT(&htim13);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+    loop();
+    HAL_Delay(10);
     /* USER CODE END WHILE */
-    alla
+    
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
@@ -187,8 +206,6 @@ static void MX_ADC1_Init(void)
 
   /* USER CODE END ADC1_Init 0 */
 
-  ADC_ChannelConfTypeDef sConfig = {0};
-
   /* USER CODE BEGIN ADC1_Init 1 */
 
   /* USER CODE END ADC1_Init 1 */
@@ -203,27 +220,10 @@ static void MX_ADC1_Init(void)
   hadc1.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_NONE;
   hadc1.Init.ExternalTrigConv = ADC_SOFTWARE_START;
   hadc1.Init.DataAlign = ADC_DATAALIGN_RIGHT;
-  hadc1.Init.NbrOfConversion = 2;
+  hadc1.Init.NbrOfConversion = 1;
   hadc1.Init.DMAContinuousRequests = DISABLE;
   hadc1.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
   if (HAL_ADC_Init(&hadc1) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
-  */
-  sConfig.Channel = ADC_CHANNEL_11;
-  sConfig.Rank = 1;
-  sConfig.SamplingTime = ADC_SAMPLETIME_15CYCLES;
-  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
-  */
-  sConfig.Channel = ADC_CHANNEL_12;
-  sConfig.Rank = 2;
-  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
     Error_Handler();
   }
@@ -283,7 +283,7 @@ static void MX_TIM11_Init(void)
 
   /* USER CODE END TIM11_Init 1 */
   htim11.Instance = TIM11;
-  htim11.Init.Prescaler = 16-1;
+  htim11.Init.Prescaler = 16 - 1;
   htim11.Init.CounterMode = TIM_COUNTERMODE_UP;
   htim11.Init.Period = 65535;
   htim11.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
@@ -429,6 +429,80 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+
+/**
+ * @brief Interrupt that is called when any Timer overflows
+ * @param htim timer handle
+ * @retval none
+ */
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+  if (htim == &htim14) //timer 14 used for fast PPM generation
+  {
+    if (fastPPM_powered == true)
+    {
+      TIM14->ARR = (uint32_t)(fastPPM_OFFTime - 1);
+      HAL_GPIO_WritePin(ONBOARD_WRITE_1_GPIO_Port, ONBOARD_WRITE_1_Pin, GPIO_PIN_RESET);
+      HAL_GPIO_WritePin(ONBOARD_LED_4_GPIO_Port, ONBOARD_LED_4_Pin, GPIO_PIN_RESET);
+      fastPPM_powered = false;
+    }
+    else
+    {
+      TIM14->ARR = (uint32_t)(fastPPM_ONTime - 1);
+      HAL_GPIO_WritePin(ONBOARD_WRITE_1_GPIO_Port, ONBOARD_WRITE_1_Pin, GPIO_PIN_SET);
+      HAL_GPIO_WritePin(ONBOARD_LED_4_GPIO_Port, ONBOARD_LED_4_Pin, GPIO_PIN_SET);
+      fastPPM_powered = true;
+    }
+  }
+  
+  if (htim == &htim13) //timer 13 used for fast PPM generation
+  {
+    if (slowPPM1_powered == true)
+    {
+      TIM13->ARR = (uint32_t)(slowPPM1_OFFTime - 1);
+      HAL_GPIO_WritePin(ONBOARD_WRITE_2_GPIO_Port, ONBOARD_WRITE_2_Pin, GPIO_PIN_RESET);
+      //HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_7);
+      HAL_GPIO_WritePin(ONBOARD_LED_3_GPIO_Port, ONBOARD_LED_3_Pin, GPIO_PIN_RESET);
+      slowPPM1_powered = false;
+    }
+    else
+    {
+      TIM13->ARR = (uint32_t)(slowPPM1_ONTime - 1);
+      HAL_GPIO_WritePin(ONBOARD_WRITE_2_GPIO_Port, ONBOARD_WRITE_2_Pin, GPIO_PIN_SET);
+      //HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_7);
+      HAL_GPIO_WritePin(ONBOARD_LED_3_GPIO_Port, ONBOARD_LED_3_Pin, GPIO_PIN_SET);
+      slowPPM1_powered = true;
+    }
+  }
+}
+
+void ADC_Select_Channel_11()
+{
+  ADC_ChannelConfTypeDef sConfig = {0};
+  /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
+  */
+  sConfig.Channel = ADC_CHANNEL_11;
+  sConfig.Rank = 1;
+  sConfig.SamplingTime = ADC_SAMPLETIME_15CYCLES;
+  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  HAL_ADC_Start(&hadc1);
+}
+void ADC_Select_Channel_12()
+{
+  ADC_ChannelConfTypeDef sConfig = {0};
+  /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
+  */
+  sConfig.Channel = ADC_CHANNEL_12;
+  sConfig.Rank = 1;
+  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  HAL_ADC_Start(&hadc1);
+}
 
 /* USER CODE END 4 */
 
