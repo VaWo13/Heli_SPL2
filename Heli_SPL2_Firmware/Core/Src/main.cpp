@@ -124,7 +124,7 @@ int main(void)
   /* Initialize interrupts */
   MX_NVIC_Init();
   /* USER CODE BEGIN 2 */
-  // HAL_TIM_Base_Start_IT(&htim14);
+  HAL_TIM_Base_Start_IT(&htim14);
   HAL_TIM_Base_Start_IT(&htim13);
   /* USER CODE END 2 */
 
@@ -443,14 +443,12 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
     {
       TIM14->ARR = (uint32_t)(fastPPM_OFFTime - 1);
       HAL_GPIO_WritePin(ONBOARD_WRITE_1_GPIO_Port, ONBOARD_WRITE_1_Pin, GPIO_PIN_RESET);
-      HAL_GPIO_WritePin(ONBOARD_LED_4_GPIO_Port, ONBOARD_LED_4_Pin, GPIO_PIN_RESET);
       fastPPM_powered = false;
     }
     else
     {
       TIM14->ARR = (uint32_t)(fastPPM_ONTime - 1);
       HAL_GPIO_WritePin(ONBOARD_WRITE_1_GPIO_Port, ONBOARD_WRITE_1_Pin, GPIO_PIN_SET);
-      HAL_GPIO_WritePin(ONBOARD_LED_4_GPIO_Port, ONBOARD_LED_4_Pin, GPIO_PIN_SET);
       fastPPM_powered = true;
     }
   }
@@ -461,16 +459,12 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
     {
       TIM13->ARR = (uint32_t)(slowPPM1_OFFTime - 1);
       HAL_GPIO_WritePin(ONBOARD_WRITE_2_GPIO_Port, ONBOARD_WRITE_2_Pin, GPIO_PIN_RESET);
-      //HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_7);
-      HAL_GPIO_WritePin(ONBOARD_LED_3_GPIO_Port, ONBOARD_LED_3_Pin, GPIO_PIN_RESET);
       slowPPM1_powered = false;
     }
     else
     {
       TIM13->ARR = (uint32_t)(slowPPM1_ONTime - 1);
       HAL_GPIO_WritePin(ONBOARD_WRITE_2_GPIO_Port, ONBOARD_WRITE_2_Pin, GPIO_PIN_SET);
-      //HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_7);
-      HAL_GPIO_WritePin(ONBOARD_LED_3_GPIO_Port, ONBOARD_LED_3_Pin, GPIO_PIN_SET);
       slowPPM1_powered = true;
     }
   }
