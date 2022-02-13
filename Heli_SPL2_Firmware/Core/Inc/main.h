@@ -46,7 +46,9 @@ extern "C" {
 
 /* Exported constants --------------------------------------------------------*/
 /* USER CODE BEGIN EC */
-
+extern uint8_t MPU6050_TX_buf[2];
+extern uint8_t MPU6050_RX_buf[14];
+extern int16_t MPU_Values[6];
 /* USER CODE END EC */
 
 /* Exported macro ------------------------------------------------------------*/
@@ -59,6 +61,7 @@ extern "C" {
 
 extern void ADC_Select_Channel_11();
 extern void ADC_Select_Channel_12();
+extern void MPU6050_readValues();
 
 
 void Error_Handler(void);
@@ -68,6 +71,11 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define MPU6050_Adresse 0x68 << 1
+
+
+
+
 #define true                              1
 #define false                             0
 #define ONBOARD_READ_IT_3_Pin             GPIO_PIN_0
