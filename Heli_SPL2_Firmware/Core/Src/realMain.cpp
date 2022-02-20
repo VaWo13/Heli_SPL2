@@ -1,41 +1,74 @@
 #include "main.h"
 #include "realMain.h"
+#include "SBUS.h"
 
 #include "usbd_cdc_if.h"
 #include <string.h>
 #include <stdio.h>
 #include <math.h>
 
+uint32_t timestamp = 0;
 uint16_t adcValuesArray[2];
 
 void loop()
 {
-    ADC_Select_Channel_11();
+  
+  if ((HAL_GetTick() - timestamp) >= 50)
+  {
+    timestamp = HAL_GetTick();
+
+    MPU6050_readValues();
+
+    // for (size_t i = 0; i < 1; i++)
+    // {
+    //   unsigned char msg[300];
+	  //   sprintf((char*)msg,"%hd %hd %hd %hd %hd %hd\r\n", MPU_Values[0], MPU_Values[1], MPU_Values[2], MPU_Values[3], MPU_Values[4], MPU_Values[5]);
+	  //   uint8_t x = 0;
+	  //   while (msg[x] != NULL)
+	  //   {
+	  //   	x++;
+	  //   }
+	  //   unsigned char msgTransmit[x];
+	  //   for (size_t i = 0; i < x; i++)
+	  //   {
+	  //   	msgTransmit[i] = msg[i];
+	  //   }
+	  //   CDC_Transmit_FS((unsigned char*)msgTransmit, sizeof(msgTransmit));
+    // }
+
+    EXTI->IMR |= (EXTI_LINE_0);   //enable Pin interrupt
+
+    for (size_t i = 0; i < 1; i++)
+    {
+      unsigned char msg[300];
+	    sprintf((char*)msg," %hu %hu %hu %hu %hu %hu %hu %hu %hu %hu\r\n", SBUS_RxBitString[0], SBUS_RxBitString[1], SBUS_RxBitString[2], SBUS_RxBitString[3], SBUS_RxBitString[4], SBUS_RxBitString[5], SBUS_RxBitString[6], SBUS_RxBitString[7], SBUS_RxBitString[8], SBUS_RxBitString[9]);
+	    uint8_t x = 0;
+	    while (msg[x] != NULL)
+	    {
+	    	x++;
+	    }
+	    unsigned char msgTransmit[x];
+	    for (size_t i = 0; i < x; i++)
+	    {
+	    	msgTransmit[i] = msg[i];
+	    }
+	    CDC_Transmit_FS((unsigned char*)msgTransmit, sizeof(msgTransmit));
+    }
+    
+
+  }
+  ADC_Select_Channel_11();
 	adcValuesArray[0] = (uint16_t)ADC1->DR;
 	ADC_Select_Channel_12();
 	adcValuesArray[1] = (uint16_t)ADC1->DR;
 
-    uint16_t angle = motorAngle(adcValuesArray[1] - 1250, adcValuesArray[0] - 1250);
+  uint16_t angle = motorAngle(adcValuesArray[1] - 1250, adcValuesArray[0] - 1250);
 
-    unsigned char msg[30];
-	sprintf((char*)msg,"%lu %lu %lu %lu\r\n",adcValuesArray[0], adcValuesArray[1], angle, slowPPM1_ONTime);
-	uint8_t x = 0;
-	while (msg[x] != NULL)
-	{
-		x++;
-	}
-	unsigned char msgTransmit[x];
-	for (size_t i = 0; i < x; i++)
-	{
-		msgTransmit[i] = msg[i];
-	}
-	CDC_Transmit_FS((unsigned char*)msgTransmit, sizeof(msgTransmit));
+  slowPPM1_ONTime = (uint16_t)((((float)angle * (float)slowPPM1_MinTime) / (float)360) + (float)slowPPM1_MinTime);
+  slowPPM1_OFFTime = slowPPM1_Pulselength - fastPPM_ONTime;//OFF time in microseconds
 
-    slowPPM1_ONTime = (uint16_t)((((float)angle * (float)slowPPM1_MinTime) / (float)360) + (float)slowPPM1_MinTime);
-    slowPPM1_OFFTime = slowPPM1_Pulselength - fastPPM_ONTime;//OFF time in microseconds
-
-    fastPPM_ONTime = (uint16_t)((((float)angle * (float)fastPPM_MinTime) / (float)360) + (float)fastPPM_MinTime);
-    fastPPM_OFFTime = fastPPM_Pulselength - fastPPM_ONTime;//OFF time in microseconds
+  fastPPM_ONTime = (uint16_t)((((float)angle * (float)fastPPM_MinTime) / (float)360) + (float)fastPPM_MinTime);
+  fastPPM_OFFTime = fastPPM_Pulselength - fastPPM_ONTime;//OFF time in microseconds
 }
 
 
