@@ -15,10 +15,10 @@ void loop()
 	ADC_Select_Channel_12();
 	adcValuesArray[1] = (uint16_t)ADC1->DR;
 
-    uint16_t alla = motorAngle(adcValuesArray[1] - 1250, adcValuesArray[0] - 1250);
+    uint16_t angle = motorAngle(adcValuesArray[1] - 1250, adcValuesArray[0] - 1250);
 
     unsigned char msg[30];
-	sprintf((char*)msg,"%lu %lu %lu %lu\r\n",adcValuesArray[0], adcValuesArray[1], alla, slowPPM1_ONTime);
+	sprintf((char*)msg,"%lu %lu %lu %lu\r\n",adcValuesArray[0], adcValuesArray[1], angle, slowPPM1_ONTime);
 	uint8_t x = 0;
 	while (msg[x] != NULL)
 	{
@@ -31,7 +31,11 @@ void loop()
 	}
 	CDC_Transmit_FS((unsigned char*)msgTransmit, sizeof(msgTransmit));
 
-    slowPPM1_ONTime = (uint16_t)((((float)alla * (float)slowPPM1_MinTime) / (float)360) + (float)slowPPM1_MinTime);
+    slowPPM1_ONTime = (uint16_t)((((float)angle * (float)slowPPM1_MinTime) / (float)360) + (float)slowPPM1_MinTime);
+    slowPPM1_OFFTime = slowPPM1_Pulselength - fastPPM_ONTime;//OFF time in microseconds
+
+    fastPPM_ONTime = (uint16_t)((((float)angle * (float)fastPPM_MinTime) / (float)360) + (float)fastPPM_MinTime);
+    fastPPM_OFFTime = fastPPM_Pulselength - fastPPM_ONTime;//OFF time in microseconds
 }
 
 
