@@ -12,6 +12,7 @@ C_SRCS += \
 ../Core/Src/system_stm32f2xx.c 
 
 CPP_SRCS += \
+../Core/Src/SBUS.cpp \
 ../Core/Src/main.cpp \
 ../Core/Src/realMain.cpp 
 
@@ -23,6 +24,7 @@ C_DEPS += \
 ./Core/Src/system_stm32f2xx.d 
 
 OBJS += \
+./Core/Src/SBUS.o \
 ./Core/Src/main.o \
 ./Core/Src/realMain.o \
 ./Core/Src/stm32f2xx_hal_msp.o \
@@ -32,6 +34,7 @@ OBJS += \
 ./Core/Src/system_stm32f2xx.o 
 
 CPP_DEPS += \
+./Core/Src/SBUS.d \
 ./Core/Src/main.d \
 ./Core/Src/realMain.d 
 
@@ -45,7 +48,7 @@ Core/Src/%.o: ../Core/Src/%.c Core/Src/subdir.mk
 clean: clean-Core-2f-Src
 
 clean-Core-2f-Src:
-	-$(RM) ./Core/Src/main.d ./Core/Src/main.o ./Core/Src/realMain.d ./Core/Src/realMain.o ./Core/Src/stm32f2xx_hal_msp.d ./Core/Src/stm32f2xx_hal_msp.o ./Core/Src/stm32f2xx_it.d ./Core/Src/stm32f2xx_it.o ./Core/Src/syscalls.d ./Core/Src/syscalls.o ./Core/Src/sysmem.d ./Core/Src/sysmem.o ./Core/Src/system_stm32f2xx.d ./Core/Src/system_stm32f2xx.o
+	-$(RM) ./Core/Src/SBUS.d ./Core/Src/SBUS.o ./Core/Src/main.d ./Core/Src/main.o ./Core/Src/realMain.d ./Core/Src/realMain.o ./Core/Src/stm32f2xx_hal_msp.d ./Core/Src/stm32f2xx_hal_msp.o ./Core/Src/stm32f2xx_it.d ./Core/Src/stm32f2xx_it.o ./Core/Src/syscalls.d ./Core/Src/syscalls.o ./Core/Src/sysmem.d ./Core/Src/sysmem.o ./Core/Src/system_stm32f2xx.d ./Core/Src/system_stm32f2xx.o
 
 .PHONY: clean-Core-2f-Src
 

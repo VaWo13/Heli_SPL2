@@ -21,6 +21,8 @@
 #include "usb_device.h"
 
 #include "realMain.h"
+#include "SBUS.h"
+
 #include "usbd_cdc_if.h"
 #include <string.h>
 #include <stdio.h>
@@ -136,6 +138,8 @@ int main(void)
   /* USER CODE BEGIN 2 */
   HAL_TIM_Base_Start_IT(&htim14);
   HAL_TIM_Base_Start_IT(&htim13);
+  HAL_TIM_Base_Start(&htim11);
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -396,8 +400,8 @@ static void MX_GPIO_Init(void)
 
   /*Configure GPIO pin : ONBOARD_READ_IT_3_Pin */
   GPIO_InitStruct.Pin = ONBOARD_READ_IT_3_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
-  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
+  GPIO_InitStruct.Pull = GPIO_PULLDOWN;
   HAL_GPIO_Init(ONBOARD_READ_IT_3_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pins : ONBOARD_BUTTON_1_Pin ONBOARD_BUTTON_2_Pin ONBOARD_BUTTON_3_Pin ONBOARD_BUTTON_4_Pin */
@@ -482,7 +486,6 @@ void MPU6050_readValues()
 
 }
 
-
 /**
  * @brief Interrupt that is called when any Timer overflows
  * @param htim timer handle
@@ -520,6 +523,18 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
       HAL_GPIO_WritePin(ONBOARD_WRITE_2_GPIO_Port, ONBOARD_WRITE_2_Pin, GPIO_PIN_SET);
       slowPPM1_powered = true;
     }
+  }
+}
+
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+  if (GPIO_Pin == ONBOARD_READ_IT_3_Pin)
+  {
+    read_SBUS();
+  }
+  else
+  {
+    __NOP();
   }
 }
 

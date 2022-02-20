@@ -1,5 +1,6 @@
 #include "main.h"
 #include "realMain.h"
+#include "SBUS.h"
 
 #include "usbd_cdc_if.h"
 #include <string.h>
@@ -18,20 +19,43 @@ void loop()
 
     MPU6050_readValues();
 
+    // for (size_t i = 0; i < 1; i++)
+    // {
+    //   unsigned char msg[300];
+	  //   sprintf((char*)msg,"%hd %hd %hd %hd %hd %hd\r\n", MPU_Values[0], MPU_Values[1], MPU_Values[2], MPU_Values[3], MPU_Values[4], MPU_Values[5]);
+	  //   uint8_t x = 0;
+	  //   while (msg[x] != NULL)
+	  //   {
+	  //   	x++;
+	  //   }
+	  //   unsigned char msgTransmit[x];
+	  //   for (size_t i = 0; i < x; i++)
+	  //   {
+	  //   	msgTransmit[i] = msg[i];
+	  //   }
+	  //   CDC_Transmit_FS((unsigned char*)msgTransmit, sizeof(msgTransmit));
+    // }
 
-    unsigned char msg[300];
-	  sprintf((char*)msg,"%hd %hd %hd %hd %hd %hd\r\n", MPU_Values[0], MPU_Values[1], MPU_Values[2], MPU_Values[3], MPU_Values[4], MPU_Values[5]);
-	  uint8_t x = 0;
-	  while (msg[x] != NULL)
-	  {
-	  	x++;
-	  }
-	  unsigned char msgTransmit[x];
-	  for (size_t i = 0; i < x; i++)
-	  {
-	  	msgTransmit[i] = msg[i];
-	  }
-	  CDC_Transmit_FS((unsigned char*)msgTransmit, sizeof(msgTransmit));
+    EXTI->IMR |= (EXTI_LINE_0);   //enable Pin interrupt
+
+    for (size_t i = 0; i < 1; i++)
+    {
+      unsigned char msg[300];
+	    sprintf((char*)msg," %hu %hu %hu %hu %hu %hu %hu %hu %hu %hu\r\n", SBUS_RxBitString[0], SBUS_RxBitString[1], SBUS_RxBitString[2], SBUS_RxBitString[3], SBUS_RxBitString[4], SBUS_RxBitString[5], SBUS_RxBitString[6], SBUS_RxBitString[7], SBUS_RxBitString[8], SBUS_RxBitString[9]);
+	    uint8_t x = 0;
+	    while (msg[x] != NULL)
+	    {
+	    	x++;
+	    }
+	    unsigned char msgTransmit[x];
+	    for (size_t i = 0; i < x; i++)
+	    {
+	    	msgTransmit[i] = msg[i];
+	    }
+	    CDC_Transmit_FS((unsigned char*)msgTransmit, sizeof(msgTransmit));
+    }
+    
+
   }
   ADC_Select_Channel_11();
 	adcValuesArray[0] = (uint16_t)ADC1->DR;
@@ -45,10 +69,6 @@ void loop()
 
   fastPPM_ONTime = (uint16_t)((((float)angle * (float)fastPPM_MinTime) / (float)360) + (float)fastPPM_MinTime);
   fastPPM_OFFTime = fastPPM_Pulselength - fastPPM_ONTime;//OFF time in microseconds
-
-
-
-  
 }
 
 
