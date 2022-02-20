@@ -33,5 +33,3 @@ void read_SBUS()
     }
     HAL_GPIO_TogglePin(ONBOARD_LED_4_GPIO_Port, ONBOARD_LED_4_Pin);     //debug pin
 }
-
-
