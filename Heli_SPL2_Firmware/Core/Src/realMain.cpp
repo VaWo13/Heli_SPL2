@@ -13,11 +13,14 @@ uint16_t adcValuesArray[2];
 void loop()
 {
   
-  if ((HAL_GetTick() - timestamp) >= 50)
+  if ((HAL_GetTick() - timestamp) >= 20)
   {
-    timestamp = HAL_GetTick();
+    timestamp += 20;
 
-    MPU6050_readValues();
+    //MPU6050_readValues();
+
+    //HAL_NVIC_EnableIRQ(EXTI0_IRQn);
+
 
     // for (size_t i = 0; i < 1; i++)
     // {
@@ -36,12 +39,10 @@ void loop()
 	  //   CDC_Transmit_FS((unsigned char*)msgTransmit, sizeof(msgTransmit));
     // }
 
-    EXTI->IMR |= (EXTI_LINE_0);   //enable Pin interrupt
-
     for (size_t i = 0; i < 1; i++)
     {
       unsigned char msg[300];
-	    sprintf((char*)msg," %hu %hu %hu %hu %hu %hu %hu %hu %hu %hu\r\n", SBUS_RxBitString[0], SBUS_RxBitString[1], SBUS_RxBitString[2], SBUS_RxBitString[3], SBUS_RxBitString[4], SBUS_RxBitString[5], SBUS_RxBitString[6], SBUS_RxBitString[7], SBUS_RxBitString[8], SBUS_RxBitString[9]);
+	    sprintf((char*)msg," %hu %hu %hu %hu %hu %hu %hu %hu %hu %hu %hu %hu %hu %hu %hu %hu\r\n", SBUS_Channels[0], SBUS_Channels[1], SBUS_Channels[2], SBUS_Channels[3], SBUS_Channels[4], SBUS_Channels[5], SBUS_Channels[6], SBUS_Channels[7], SBUS_Channels[8], SBUS_Channels[9], SBUS_Channels[10], SBUS_Channels[11], SBUS_Channels[12], SBUS_Channels[13], SBUS_Channels[14], SBUS_Channels[15]);
 	    uint8_t x = 0;
 	    while (msg[x] != NULL)
 	    {

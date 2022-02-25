@@ -52,7 +52,7 @@ extern "C" {
 #define false                             0
 
 
-
+extern uint32_t PinInterruptLastTime;
 extern uint8_t MPU6050_TX_buf[2];
 extern uint8_t MPU6050_RX_buf[14];
 extern int16_t MPU_Values[6];

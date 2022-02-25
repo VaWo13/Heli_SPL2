@@ -69,6 +69,8 @@ uint8_t MPU6050_TX_buf[2];
 uint8_t MPU6050_RX_buf[14];
 int16_t MPU_Values[6];
 
+uint32_t PinInterruptLastTime = 0;
+
 
 
 void ADC_Select_Channel_11();
@@ -123,9 +125,9 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_USB_DEVICE_Init();
   MX_ADC1_Init();
   MX_I2C1_Init();
-  MX_USB_DEVICE_Init();
   MX_TIM11_Init();
   MX_TIM13_Init();
   MX_TIM14_Init();
@@ -528,9 +530,15 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
+  HAL_GPIO_TogglePin(ONBOARD_LED_4_GPIO_Port, ONBOARD_LED_4_Pin);     //debug pin
   if (GPIO_Pin == ONBOARD_READ_IT_3_Pin)
   {
-    read_SBUS();
+    uint32_t time = HAL_GetTick();
+    if (PinInterruptLastTime - time > 5)
+    {
+      PinInterruptLastTime = time;
+      read_SBUS();
+    }
   }
   else
   {
