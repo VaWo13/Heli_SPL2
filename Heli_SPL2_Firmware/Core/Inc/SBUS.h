@@ -19,9 +19,9 @@
 //total of 12 bit per byte
 
 #define SBUS_BitsPerByte 12
-#define SBUS_NuberOfBytes 25
-#define SBUS_NumberOfChannels 16
-#define SBUS_NumberOfBits SBUS_BitsPerByte * SBUS_NuberOfBytes
+#define SBUS_NumberOfBytes 25
+#define SBUS_NumberOfChannels 8
+#define SBUS_NumberOfBits SBUS_BitsPerByte * SBUS_NumberOfBytes
 
 #define SBUS_Baud 100000
 #define APB_Clockspeed 16000000
@@ -39,15 +39,17 @@ extern uint16_t SBUS_timerCount;
 
 extern uint8_t SBUS_RxBitString[SBUS_NumberOfBits];
 
-extern uint8_t SBUS_Bytes[SBUS_NuberOfBytes];
+extern uint8_t SBUS_Bytes[SBUS_NumberOfBytes];
 
-extern uint16_t SBUS_Channels[SBUS_NumberOfChannels];
+extern int16_t SBUS_TempChannels[SBUS_NumberOfChannels];
+extern int16_t SBUS_Channels[SBUS_NumberOfChannels];        //values expected from idk...
 
 extern uint8_t SBUS_CorruptedPackage;
+extern uint8_t SBUSNewPackage;
 
 
 
-void read_SBUS();
+void SBUS_RecieveBits();
 
 
 

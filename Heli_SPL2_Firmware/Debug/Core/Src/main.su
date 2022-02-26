@@ -10,9 +10,9 @@ main.cpp:383:13:void MX_GPIO_Init()	48	static
 main.cpp:447:6:void MPU6050_init()	16	static
 main.cpp:456:6:void MPU6050_readValues()	16	static
 main.cpp:496:6:void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef*)	16	static
-main.cpp:531:6:void HAL_GPIO_EXTI_Callback(uint16_t)	24	static,ignoring_inline_asm
-main.cpp:549:6:void ADC_Select_Channel_11()	24	static
-main.cpp:563:6:void ADC_Select_Channel_12()	24	static
-main.cpp:583:6:void Error_Handler()	4	static,ignoring_inline_asm
-main.cpp:592:1:void __static_initialization_and_destruction_0(int, int)	16	static
-main.cpp:592:1:cpp)	8	static
+main.cpp:531:6:void HAL_GPIO_EXTI_Callback(uint16_t)	24	static
+main.cpp:545:6:void ADC_Select_Channel_11()	24	static
+main.cpp:559:6:void ADC_Select_Channel_12()	24	static
+main.cpp:579:6:void Error_Handler()	4	static,ignoring_inline_asm
+main.cpp:588:1:void __static_initialization_and_destruction_0(int, int)	16	static
+main.cpp:588:1:cpp)	8	static

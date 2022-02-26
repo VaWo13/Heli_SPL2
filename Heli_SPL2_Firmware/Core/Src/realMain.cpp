@@ -12,49 +12,45 @@ uint16_t adcValuesArray[2];
 
 void loop()
 {
-  
-  if ((HAL_GetTick() - timestamp) >= 20)
+  if ((HAL_GetTick() - timestamp) >= 50)
   {
-    timestamp += 20;
+    timestamp += 50;
 
-    //MPU6050_readValues();
+    MPU6050_readValues();
 
-    //HAL_NVIC_EnableIRQ(EXTI0_IRQn);
+     for (size_t i = 0; i < 1; i++)
+     {
+       unsigned char msg[300];
+	     sprintf((char*)msg,"%hd %hd %hd %hd %hd %hd %hd %hd %hd %hd %hd %hd %hd %hd\r\n", MPU_Values[0], MPU_Values[1], MPU_Values[2], MPU_Values[3], MPU_Values[4], MPU_Values[5], SBUS_Channels[0], SBUS_Channels[1], SBUS_Channels[2], SBUS_Channels[3], SBUS_Channels[4], SBUS_Channels[5], SBUS_Channels[6], SBUS_Channels[7]);
+	     uint8_t x = 0;
+	     while (msg[x] != NULL)
+	     {
+	     	x++;
+	     }
+	     unsigned char msgTransmit[x];
+	     for (size_t i = 0; i < x; i++)
+	     {
+	     	msgTransmit[i] = msg[i];
+	     }
+	     CDC_Transmit_FS((unsigned char*)msgTransmit, sizeof(msgTransmit));
+     }
 
-
-    // for (size_t i = 0; i < 1; i++)
-    // {
-    //   unsigned char msg[300];
-	  //   sprintf((char*)msg,"%hd %hd %hd %hd %hd %hd\r\n", MPU_Values[0], MPU_Values[1], MPU_Values[2], MPU_Values[3], MPU_Values[4], MPU_Values[5]);
-	  //   uint8_t x = 0;
-	  //   while (msg[x] != NULL)
-	  //   {
-	  //   	x++;
-	  //   }
-	  //   unsigned char msgTransmit[x];
-	  //   for (size_t i = 0; i < x; i++)
-	  //   {
-	  //   	msgTransmit[i] = msg[i];
-	  //   }
-	  //   CDC_Transmit_FS((unsigned char*)msgTransmit, sizeof(msgTransmit));
-    // }
-
-    for (size_t i = 0; i < 1; i++)
-    {
-      unsigned char msg[300];
-	    sprintf((char*)msg," %hu %hu %hu %hu %hu %hu %hu %hu %hu %hu %hu %hu %hu %hu %hu %hu\r\n", SBUS_Channels[0], SBUS_Channels[1], SBUS_Channels[2], SBUS_Channels[3], SBUS_Channels[4], SBUS_Channels[5], SBUS_Channels[6], SBUS_Channels[7], SBUS_Channels[8], SBUS_Channels[9], SBUS_Channels[10], SBUS_Channels[11], SBUS_Channels[12], SBUS_Channels[13], SBUS_Channels[14], SBUS_Channels[15]);
-	    uint8_t x = 0;
-	    while (msg[x] != NULL)
-	    {
-	    	x++;
-	    }
-	    unsigned char msgTransmit[x];
-	    for (size_t i = 0; i < x; i++)
-	    {
-	    	msgTransmit[i] = msg[i];
-	    }
-	    CDC_Transmit_FS((unsigned char*)msgTransmit, sizeof(msgTransmit));
-    }
+    //for (size_t i = 0; i < 1; i++)
+    //{
+    //  unsigned char msg[300];
+	  //  sprintf((char*)msg,"%hd %hd %hd %hd %hd %hd %hd %hd\r\n", SBUS_Channels[0], SBUS_Channels[1], SBUS_Channels[2], SBUS_Channels[3], SBUS_Channels[4], SBUS_Channels[5], SBUS_Channels[6], SBUS_Channels[7]);
+	  //  uint8_t x = 0;
+	  //  while (msg[x] != NULL)
+	  //  {
+	  //  	x++;
+	  //  }
+	  //  unsigned char msgTransmit[x];
+	  //  for (size_t i = 0; i < x; i++)
+	  //  {
+	  //  	msgTransmit[i] = msg[i];
+	  //  }
+	  //  CDC_Transmit_FS((unsigned char*)msgTransmit, sizeof(msgTransmit));
+    //}
     
 
   }
@@ -70,6 +66,11 @@ void loop()
 
   fastPPM_ONTime = (uint16_t)((((float)angle * (float)fastPPM_MinTime) / (float)360) + (float)fastPPM_MinTime);
   fastPPM_OFFTime = fastPPM_Pulselength - fastPPM_ONTime;//OFF time in microseconds
+
+  if (SBUSNewPackage == true)
+  {
+    SBUS_PostProcessing();
+  }
 }
 
 

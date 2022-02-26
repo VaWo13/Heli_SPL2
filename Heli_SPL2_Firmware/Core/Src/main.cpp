@@ -448,7 +448,7 @@ void MPU6050_init()
 {
   MPU6050_TX_buf[0] = 0x6B;
   MPU6050_TX_buf[1] = 0x00;
-  if (HAL_I2C_Master_Transmit(&hi2c1, MPU6050_Adresse, MPU6050_TX_buf, 2, 10000000) != HAL_OK)
+  if (HAL_I2C_Master_Transmit(&hi2c1, MPU6050_Adresse, MPU6050_TX_buf, 2, 10000000) != HAL_OK)    //wake up
   {
   }
 }
@@ -537,12 +537,8 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
     if (PinInterruptLastTime - time > 5)
     {
       PinInterruptLastTime = time;
-      read_SBUS();
+      SBUS_RecieveBits();
     }
-  }
-  else
-  {
-    __NOP();
   }
 }
 
