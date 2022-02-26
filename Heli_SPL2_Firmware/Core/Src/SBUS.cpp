@@ -16,20 +16,91 @@
 #include <math.h>
 
 uint16_t SBUS_timerCount = 0;
-uint8_t SBUS_RxBitString[numberOfBits];
+uint8_t SBUS_RxBitString[SBUS_NumberOfBits];
+uint8_t SBUS_Bytes[SBUS_NumberOfBytes];
+int16_t SBUS_TempChannels[SBUS_NumberOfChannels];
+int16_t SBUS_Channels[SBUS_NumberOfChannels];
+uint8_t SBUS_CorruptedPackage = false;
+uint8_t SBUSNewPackage = false;
 
-void read_SBUS()
+
+void SBUS_RecieveBits()
 {
-    EXTI->IMR &= ~(EXTI_LINE_0);
-    SBUS_timerCount = TIM11->CNT + SBUS_StartTimeOffset;       //get current clock count register value + time offset
-    for (size_t i = 0; i < numberOfBits; i++)
+  //collect bits:
+
+  SBUS_timerCount = TIM11->CNT + SBUS_StartTimeOffset;       //get current clock count register value + time offset
+  SBUS_RxBitString[0] = true;
+  //HAL_GPIO_TogglePin(ONBOARD_WRITE_4_GPIO_Port, ONBOARD_WRITE_4_Pin);     //debug pin
+  for (size_t i = 1; i < SBUS_NumberOfBits; i++)
+  {
+    HAL_GPIO_TogglePin(ONBOARD_WRITE_4_GPIO_Port, ONBOARD_WRITE_4_Pin);     //debug pin
+    SBUS_RxBitString[i] = ((ONBOARD_READ_IT_3_GPIO_Port->IDR & ONBOARD_READ_IT_3_Pin) != 0 ? true : false);     //if the pin is HIGH then the value is 1 else 0
+
+    while ((TIM11->CNT - SBUS_timerCount) < 10)
     {
-        while (TIM11->CNT - SBUS_ClockCyclesPerBit < SBUS_ClockCyclesPerBit)
-        {
-        }
-        SBUS_timerCount = TIM11->CNT;
-        SBUS_RxBitString[i] = ((ONBOARD_READ_IT_3_GPIO_Port->IDR & ONBOARD_READ_IT_3_Pin) != 0 ? true : false);     //if the pin is HIGH then the value is 1 else 0
-        HAL_GPIO_TogglePin(ONBOARD_WRITE_4_GPIO_Port, ONBOARD_WRITE_4_Pin);     //debug pin
     }
-    HAL_GPIO_TogglePin(ONBOARD_LED_4_GPIO_Port, ONBOARD_LED_4_Pin);     //debug pin
+    SBUS_timerCount += 10;
+  }
+  SBUSNewPackage = true;
+}
+
+void SBUS_PostProcessing()
+{
+    //check validity:
+
+  SBUS_CorruptedPackage = false;                      //reset corrupted package flag
+  for (size_t i = 0; i < SBUS_NumberOfBytes; i++)      //repeat for each byte
+  {
+    if ((SBUS_RxBitString[0 + (i * SBUS_BitsPerByte)] == true) & (SBUS_RxBitString[10 + (i * SBUS_BitsPerByte)] == false) & (SBUS_RxBitString[11 + (i * SBUS_BitsPerByte)] == false))       //check start bit, 2 stop bit
+    {
+      uint8_t parityCheck = false;
+      for (size_t x = 0; x < 8; x++)                                              //generate parity from 8 bits
+      {
+        parityCheck ^= SBUS_RxBitString[1 + x + (i * SBUS_BitsPerByte)];
+      }
+      if (parityCheck == SBUS_RxBitString[9 + (i * SBUS_BitsPerByte)])            //if parity fails set corrupted flag
+      {
+        SBUS_CorruptedPackage = true;
+      }
+    }
+    else                                                                            //if start or stop bits fail set corrupted flag
+    {
+      SBUS_CorruptedPackage = true;
+    }
+  }
+  
+  //assemble channels:
+
+  if (SBUS_CorruptedPackage == false)
+  {
+    uint8_t byteNumber = 0;         //0 to 21
+    uint8_t bitNumber = 0;          //0(LSB) to 7/(MSB)
+    for (size_t i = 0; i < SBUS_NumberOfChannels; i++)
+    {
+      uint8_t bitInChannel = 0;   //0(LSB) to 10(MSB)
+      SBUS_TempChannels[i] = 0;
+      
+      while (bitInChannel <= 10)
+      {
+        if (bitNumber <= 7)
+        {
+          //transfer bit
+          SBUS_TempChannels[i] |= SBUS_RxBitString[13 + (bitNumber) + (byteNumber * SBUS_BitsPerByte)] << bitInChannel;
+        }
+        else
+        {
+          byteNumber ++;
+          bitNumber = 0;
+          //transfer bit
+          SBUS_TempChannels[i] |= SBUS_RxBitString[13 + (bitNumber) + (byteNumber * SBUS_BitsPerByte)] << bitInChannel;
+        }
+        bitNumber ++;
+        bitInChannel ++;
+      }
+      
+      SBUS_TempChannels[i] = ((float)(SBUS_TempChannels[i] - 1054) * ((float)-1000 / (float)821));    //map from 233, 1875 to -1000, 1000
+      SBUS_Channels[i] = SBUS_TempChannels[i];
+    }
+  }
+  SBUSNewPackage = false;
 }

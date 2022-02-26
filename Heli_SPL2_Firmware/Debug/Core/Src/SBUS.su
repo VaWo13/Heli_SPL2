@@ -1,1 +1,2 @@
-SBUS.cpp:21:6:void read_SBUS()	16	static
+SBUS.cpp:27:6:void SBUS_RecieveBits()	16	static
+SBUS.cpp:47:6:void SBUS_PostProcessing()	32	static

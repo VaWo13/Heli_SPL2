@@ -39,3 +39,8 @@ void loop();
  * @retval returns the motor angle 0 <-> 359°
  */
 uint16_t motorAngle(int32_t hall_1, int32_t hall_2);
+
+/**
+ * @brief takes the recieved bits and converts them to channels
+ */
+void SBUS_PostProcessing();
