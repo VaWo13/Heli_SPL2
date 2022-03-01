@@ -1,3 +1,8 @@
 cmath:125:3:constexpr float std::atan(float)	16	static
+<<<<<<< HEAD
 realMain.cpp:13:6:void loop()	424	dynamic
 realMain.cpp:77:10:uint16_t motorAngle(int32_t, int32_t)	40	static
+=======
+realMain.cpp:14:6:void loop()	368	dynamic
+realMain.cpp:76:10:uint16_t motorAngle(int32_t, int32_t)	40	static
+>>>>>>> 5bead2de3ec318650516cf277ba61249854310e3

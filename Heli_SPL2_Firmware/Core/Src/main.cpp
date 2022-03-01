@@ -22,6 +22,7 @@
 
 #include "realMain.h"
 #include "SBUS.h"
+#include "MPU6050.h"
 
 #include "usbd_cdc_if.h"
 #include <string.h>
@@ -65,29 +66,20 @@ uint16_t slowPPM1_ONTime = 1500;//ON time in microseconds
 uint16_t slowPPM1_OFFTime = fastPPM_Pulselength - fastPPM_ONTime;//OFF time in microseconds
 uint8_t slowPPM1_powered = 0;
 
-uint8_t MPU6050_TX_buf[2];
-uint8_t MPU6050_RX_buf[14];
-int16_t MPU_Values[6];
-
-uint32_t PinInterruptLastTime = 0;
-
-
-
 void ADC_Select_Channel_11();
 void ADC_Select_Channel_12();
-void MPU6050_readValues();
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_ADC1_Init(void);
-static void MX_I2C1_Init(void);
+void MX_I2C1_Init(void);
 static void MX_TIM11_Init(void);
 static void MX_TIM13_Init(void);
 static void MX_TIM14_Init(void);
 static void MX_NVIC_Init(void);
-static void MPU6050_init();
+
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -132,7 +124,7 @@ int main(void)
   MX_TIM13_Init();
   MX_TIM14_Init();
 
-  MPU6050_init();
+  
 
 
   /* Initialize interrupts */
@@ -141,6 +133,23 @@ int main(void)
   HAL_TIM_Base_Start_IT(&htim14);
   HAL_TIM_Base_Start_IT(&htim13);
   HAL_TIM_Base_Start(&htim11);
+
+  HAL_Delay(50);
+  MPU6050 mpu;
+  HAL_Delay(50);
+  mpu.initialize();
+  HAL_Delay(50);
+  mpu.dmpInitialize();
+  HAL_Delay(50);
+  mpu.setDMPEnabled(true);
+  HAL_Delay(50);
+
+  mpu.setXGyroOffset(-169);
+  mpu.setYGyroOffset(165);
+  mpu.setZGyroOffset(110);
+  mpu.setXAccelOffset(4599);
+  mpu.setYAccelOffset(-951);
+  mpu.setZAccelOffset(1930);
 
   /* USER CODE END 2 */
 
@@ -253,7 +262,7 @@ static void MX_ADC1_Init(void)
   * @param None
   * @retval None
   */
-static void MX_I2C1_Init(void)
+void MX_I2C1_Init(void)
 {
 
   /* USER CODE BEGIN I2C1_Init 0 */
@@ -444,49 +453,6 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-void MPU6050_init()
-{
-  MPU6050_TX_buf[0] = 0x6B;
-  MPU6050_TX_buf[1] = 0x00;
-  if (HAL_I2C_Master_Transmit(&hi2c1, MPU6050_Adresse, MPU6050_TX_buf, 2, 10000000) != HAL_OK)    //wake up
-  {
-  }
-}
-
-void MPU6050_readValues()
-{
-  while (slowPPM1_powered == true)   //assumes that the PPM is running   if it is not running this might crash the programm
-  {
-  }
-  __HAL_TIM_DISABLE(&htim13);
-  while (fastPPM_powered == true)   //assumes that the PPM is running   if it is not running this might crash the programm
-  {
-  }
-  __HAL_TIM_DISABLE(&htim14);
-
-  MPU6050_TX_buf[0] = 0x3B;
-  if (HAL_I2C_Master_Transmit(&hi2c1, MPU6050_Adresse, MPU6050_TX_buf, 1, 100000) != HAL_OK)
-  {
-  }
-  else
-  {
-    if (HAL_I2C_Master_Receive(&hi2c1, MPU6050_Adresse, MPU6050_RX_buf, 14, 100000))
-    {
-    }
-    else
-    {
-      MPU_Values[0] = ((int16_t)MPU6050_RX_buf[ 0] << 8) | MPU6050_RX_buf[ 1];
-      MPU_Values[1] = ((int16_t)MPU6050_RX_buf[ 2] << 8) | MPU6050_RX_buf[ 3];
-      MPU_Values[2] = ((int16_t)MPU6050_RX_buf[ 4] << 8) | MPU6050_RX_buf[ 5];
-      MPU_Values[3] = ((int16_t)MPU6050_RX_buf[ 8] << 8) | MPU6050_RX_buf[ 9];
-      MPU_Values[4] = ((int16_t)MPU6050_RX_buf[10] << 8) | MPU6050_RX_buf[11];
-      MPU_Values[5] = ((int16_t)MPU6050_RX_buf[12] << 8) | MPU6050_RX_buf[13];
-    }
-  }
-  __HAL_TIM_ENABLE(&htim13);
-  __HAL_TIM_ENABLE(&htim14);
-
-}
 
 /**
  * @brief Interrupt that is called when any Timer overflows

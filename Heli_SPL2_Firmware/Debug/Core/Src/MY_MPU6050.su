@@ -1,0 +1,6 @@
+MY_MPU6050.cpp:22:6:void MPU6050()	16	static
+MY_MPU6050.cpp:56:6:void MPU6050_Calibration()	4	static
+MY_MPU6050.cpp:61:6:void MPU6050_readDMP_Quaterions()	16	static
+MY_MPU6050.cpp:99:9:uint8_t MPU6050_init()	16	static
+MY_MPU6050.cpp:190:6:void MPU6050_WriteByte(uint8_t, uint8_t, uint16_t)	24	static
+MY_MPU6050.cpp:195:6:void MPU6050_ReadByte(uint8_t, uint16_t)	24	static
