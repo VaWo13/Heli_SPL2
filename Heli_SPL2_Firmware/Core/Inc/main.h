@@ -46,16 +46,29 @@ extern "C" {
 
 /* Exported constants --------------------------------------------------------*/
 /* USER CODE BEGIN EC */
-#define MPU6050_Adresse 0x68 << 1
 
 #define true                              1
 #define false                             0
 
+extern I2C_HandleTypeDef hi2c1;
+
+extern TIM_HandleTypeDef htim14;
+extern TIM_HandleTypeDef htim13;
 
 
-extern uint8_t MPU6050_TX_buf[2];
-extern uint8_t MPU6050_RX_buf[14];
-extern int16_t MPU_Values[6];
+
+extern uint16_t fastPPM_ONTime;//ON time in microseconds
+extern uint16_t fastPPM_OFFTime;//OFF time in microseconds
+extern uint8_t fastPPM_powered;
+
+extern uint16_t slowPPM1_ONTime;//ON time in microseconds
+extern uint16_t slowPPM1_OFFTime;//OFF time in microseconds
+extern uint8_t slowPPM1_powered;
+
+//#include "MPU6050.h"
+
+//extern MPU6050 mpu;
+
 /* USER CODE END EC */
 
 /* Exported macro ------------------------------------------------------------*/
@@ -64,11 +77,11 @@ extern int16_t MPU_Values[6];
 /* USER CODE END EM */
 
 /* Exported functions prototypes ---------------------------------------------*/
-
+extern void MX_I2C1_Init(void);
 
 extern void ADC_Select_Channel_11();
 extern void ADC_Select_Channel_12();
-extern void MPU6050_readValues();
+
 
 
 void Error_Handler(void);
