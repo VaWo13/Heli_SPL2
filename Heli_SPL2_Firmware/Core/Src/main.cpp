@@ -143,6 +143,14 @@ int main(void)
   HAL_Delay(50);
   mpu.setDMPEnabled(true);
   HAL_Delay(50);
+
+  mpu.setXGyroOffset(-169);
+  mpu.setYGyroOffset(165);
+  mpu.setZGyroOffset(110);
+  mpu.setXAccelOffset(4599);
+  mpu.setYAccelOffset(-951);
+  mpu.setZAccelOffset(1930);
+
   /* USER CODE END 2 */
 
   /* Infinite loop */

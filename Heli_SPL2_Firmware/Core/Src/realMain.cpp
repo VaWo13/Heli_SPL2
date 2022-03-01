@@ -42,7 +42,7 @@ void loop()
     for (size_t i = 0; i < 1; i++)
     {
       unsigned char msg[300];
-	    sprintf((char*)msg," %lu %lu %lu %lu %hu\r\n", Quaternions[0], Quaternions[1], Quaternions[2], Quaternions[3], FIFOCounter);
+	    sprintf((char*)msg," %ld %ld %ld %ld %hu\r\n", (Quaternions[0] / 8), (Quaternions[1] / 8), (Quaternions[2] / 8), (Quaternions[3] / 8), FIFOCounter);
 	    uint8_t x = 0;
 	    while (msg[x] != NULL)
 	    {
