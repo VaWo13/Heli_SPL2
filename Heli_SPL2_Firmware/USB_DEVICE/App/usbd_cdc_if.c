@@ -217,11 +217,8 @@ static int8_t CDC_Control_FS(uint8_t cmd, uint8_t* pbuf, uint16_t length)
   /*                                        4 - Space                            */
   /* 6      | bDataBits  |   1   | Number Data bits (5, 6, 7, 8 or 16).          */
   /*******************************************************************************/
-<<<<<<< HEAD
-  static uint8_t lineCoding[7] // 115200bps, 1stop, no parity, 8bit
-=======
     static uint8_t lineCoding[7] // 115200bps, 1stop, no parity, 8bit
->>>>>>> 5bead2de3ec318650516cf277ba61249854310e3
+
     = { 0x00, 0xC2, 0x01, 0x00, 0x00, 0x00, 0x08 };
 
     case CDC_SET_LINE_CODING:

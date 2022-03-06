@@ -52,10 +52,16 @@
 ADC_HandleTypeDef hadc1;
 
 I2C_HandleTypeDef hi2c1;
+DMA_HandleTypeDef hdma_i2c1_tx;
+DMA_HandleTypeDef hdma_i2c1_rx;
 
+TIM_HandleTypeDef htim3;
+TIM_HandleTypeDef htim4;
 TIM_HandleTypeDef htim11;
 TIM_HandleTypeDef htim13;
 TIM_HandleTypeDef htim14;
+
+uint32_t PinInterruptLastTime;
 
 /* USER CODE BEGIN PV */
 uint16_t fastPPM_ONTime = 1500;//ON time in microseconds
@@ -75,9 +81,12 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_ADC1_Init(void);
 void MX_I2C1_Init(void);
+static void MX_TIM3_Init(void);
+static void MX_TIM4_Init(void);
 static void MX_TIM11_Init(void);
 static void MX_TIM13_Init(void);
 static void MX_TIM14_Init(void);
+static void MX_DMA_Init(void);
 static void MX_NVIC_Init(void);
 
 /* USER CODE BEGIN PFP */
@@ -120,9 +129,12 @@ int main(void)
   MX_USB_DEVICE_Init();
   MX_ADC1_Init();
   MX_I2C1_Init();
+  MX_TIM3_Init();
+  MX_TIM4_Init();
   MX_TIM11_Init();
   MX_TIM13_Init();
   MX_TIM14_Init();
+  MX_DMA_Init();
 
   
 
@@ -130,9 +142,9 @@ int main(void)
   /* Initialize interrupts */
   MX_NVIC_Init();
   /* USER CODE BEGIN 2 */
-  HAL_TIM_Base_Start_IT(&htim14);
-  HAL_TIM_Base_Start_IT(&htim13);
-  HAL_TIM_Base_Start(&htim11);
+
+
+  HAL_NVIC_DisableIRQ(EXTI0_IRQn);
 
   HAL_Delay(50);
   MPU6050 mpu;
@@ -151,6 +163,16 @@ int main(void)
   mpu.setYAccelOffset(-951);
   mpu.setZAccelOffset(1930);
 
+  HAL_TIM_Base_Start_IT(&htim3);
+  HAL_TIM_Base_Start_IT(&htim4);
+  //HAL_TIM_Base_Start_IT(&htim14);
+  //HAL_TIM_Base_Start_IT(&htim13);
+  HAL_TIM_Base_Start(&htim11);
+
+  HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
+  HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_1);
+
+  HAL_NVIC_EnableIRQ(EXTI0_IRQn);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -292,6 +314,104 @@ void MX_I2C1_Init(void)
 }
 
 /**
+  * @brief TIM3 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_TIM3_Init(void)
+{
+
+  /* USER CODE BEGIN TIM3_Init 0 */
+
+  /* USER CODE END TIM3_Init 0 */
+
+  TIM_MasterConfigTypeDef sMasterConfig = {0};
+  TIM_OC_InitTypeDef sConfigOC = {0};
+
+  /* USER CODE BEGIN TIM3_Init 1 */
+
+  /* USER CODE END TIM3_Init 1 */
+  htim3.Instance = TIM3;
+  htim3.Init.Prescaler = 16-1;
+  htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim3.Init.Period = 20000;
+  htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  htim3.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_PWM_Init(&htim3) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+  if (HAL_TIMEx_MasterConfigSynchronization(&htim3, &sMasterConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sConfigOC.OCMode = TIM_OCMODE_PWM1;
+  sConfigOC.Pulse = 0;
+  sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
+  sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
+  if (HAL_TIM_PWM_ConfigChannel(&htim3, &sConfigOC, TIM_CHANNEL_1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN TIM3_Init 2 */
+
+  /* USER CODE END TIM3_Init 2 */
+  HAL_TIM_MspPostInit(&htim3);
+
+}
+
+/**
+  * @brief TIM4 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_TIM4_Init(void)
+{
+
+  /* USER CODE BEGIN TIM4_Init 0 */
+
+  /* USER CODE END TIM4_Init 0 */
+
+  TIM_MasterConfigTypeDef sMasterConfig = {0};
+  TIM_OC_InitTypeDef sConfigOC = {0};
+
+  /* USER CODE BEGIN TIM4_Init 1 */
+
+  /* USER CODE END TIM4_Init 1 */
+  htim4.Instance = TIM4;
+  htim4.Init.Prescaler = 16-1;
+  htim4.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim4.Init.Period = 2500;
+  htim4.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  htim4.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_PWM_Init(&htim4) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+  if (HAL_TIMEx_MasterConfigSynchronization(&htim4, &sMasterConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sConfigOC.OCMode = TIM_OCMODE_PWM1;
+  sConfigOC.Pulse = 0;
+  sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
+  sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
+  if (HAL_TIM_PWM_ConfigChannel(&htim4, &sConfigOC, TIM_CHANNEL_1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN TIM4_Init 2 */
+
+  /* USER CODE END TIM4_Init 2 */
+  HAL_TIM_MspPostInit(&htim4);
+
+}
+
+/**
   * @brief TIM11 Initialization Function
   * @param None
   * @retval None
@@ -385,6 +505,25 @@ static void MX_TIM14_Init(void)
 }
 
 /**
+  * Enable DMA controller clock
+  */
+static void MX_DMA_Init(void)
+{
+
+  /* DMA controller clock enable */
+  __HAL_RCC_DMA1_CLK_ENABLE();
+  
+  /* DMA interrupt init */
+  /* DMA1_Stream0_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA1_Stream0_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(DMA1_Stream0_IRQn);
+  /* DMA1_Stream6_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA1_Stream6_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(DMA1_Stream6_IRQn);
+
+}
+
+/**
   * @brief GPIO Initialization Function
   * @param None
   * @retval None
@@ -404,10 +543,7 @@ static void MX_GPIO_Init(void)
                           |ONBOARD_WRITE_3_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOC, ONBOARD_WRITE_4_Pin|ONBOARD_WRITE_2_Pin, GPIO_PIN_RESET);
-
-  /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(ONBOARD_WRITE_1_GPIO_Port, ONBOARD_WRITE_1_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(ONBOARD_WRITE_2_GPIO_Port, ONBOARD_WRITE_2_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin : ONBOARD_READ_IT_3_Pin */
   GPIO_InitStruct.Pin = ONBOARD_READ_IT_3_Pin;
@@ -430,19 +566,12 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : ONBOARD_WRITE_4_Pin ONBOARD_WRITE_2_Pin */
-  GPIO_InitStruct.Pin = ONBOARD_WRITE_4_Pin|ONBOARD_WRITE_2_Pin;
+  /*Configure GPIO pin : ONBOARD_WRITE_2_Pin */
+  GPIO_InitStruct.Pin = ONBOARD_WRITE_2_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
-
-  /*Configure GPIO pin : ONBOARD_WRITE_1_Pin */
-  GPIO_InitStruct.Pin = ONBOARD_WRITE_1_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(ONBOARD_WRITE_1_GPIO_Port, &GPIO_InitStruct);
+  HAL_GPIO_Init(ONBOARD_WRITE_2_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pin : ONBOARD_READ_4_Pin */
   GPIO_InitStruct.Pin = ONBOARD_READ_4_Pin;
@@ -461,46 +590,54 @@ static void MX_GPIO_Init(void)
  */
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
-  if (htim == &htim14) //timer 14 used for fast PPM generation
-  {
-    if (fastPPM_powered == true)
-    {
-      TIM14->ARR = (uint32_t)(fastPPM_OFFTime - 1);
-      HAL_GPIO_WritePin(ONBOARD_WRITE_1_GPIO_Port, ONBOARD_WRITE_1_Pin, GPIO_PIN_RESET);
-      fastPPM_powered = false;
-    }
-    else
-    {
-      TIM14->ARR = (uint32_t)(fastPPM_ONTime - 1);
-      HAL_GPIO_WritePin(ONBOARD_WRITE_1_GPIO_Port, ONBOARD_WRITE_1_Pin, GPIO_PIN_SET);
-      fastPPM_powered = true;
-    }
-  }
-  
-  if (htim == &htim13) //timer 13 used for fast PPM generation
-  {
-    if (slowPPM1_powered == true)
-    {
-      TIM13->ARR = (uint32_t)(slowPPM1_OFFTime - 1);
-      HAL_GPIO_WritePin(ONBOARD_WRITE_2_GPIO_Port, ONBOARD_WRITE_2_Pin, GPIO_PIN_RESET);
-      slowPPM1_powered = false;
-    }
-    else
-    {
-      TIM13->ARR = (uint32_t)(slowPPM1_ONTime - 1);
-      HAL_GPIO_WritePin(ONBOARD_WRITE_2_GPIO_Port, ONBOARD_WRITE_2_Pin, GPIO_PIN_SET);
-      slowPPM1_powered = true;
-    }
-  }
+  // HAL_NVIC_DisableIRQ(EXTI0_IRQn);
+  // if (SBUS_RecieveDone == false)
+  // {
+    // if (htim == &htim14) //timer 14 used for fast PPM generation
+    // {
+      // if (fastPPM_powered == true)
+      // {
+        // TIM14->ARR = (uint32_t)(fastPPM_OFFTime - 1);
+        // ONBOARD_WRITE_1_GPIO_Port->BSRR = (uint32_t)ONBOARD_WRITE_1_Pin << 16U;
+        // fastPPM_powered = false;
+      // }
+      // else
+      // {
+        // TIM14->ARR = (uint32_t)(fastPPM_ONTime - 1);
+        // ONBOARD_WRITE_1_GPIO_Port->BSRR = ONBOARD_WRITE_1_Pin;
+        // fastPPM_powered = true;
+      // }
+    // }
+
+    // if (htim == &htim13) //timer 13 used for fast PPM generation
+    // {
+      // if (slowPPM1_powered == true)
+      // {
+        // TIM13->ARR = (uint32_t)(slowPPM1_OFFTime - 1);
+        // ONBOARD_WRITE_2_GPIO_Port->BSRR = (uint32_t)ONBOARD_WRITE_2_Pin << 16U;
+        // slowPPM1_powered = false;
+      // }
+      // else
+      // {
+        // TIM13->ARR = (uint32_t)(slowPPM1_ONTime - 1);
+        // ONBOARD_WRITE_2_GPIO_Port->BSRR = ONBOARD_WRITE_2_Pin;
+        // slowPPM1_powered = true;
+      // }
+    // }
+    // HAL_NVIC_EnableIRQ(EXTI0_IRQn);
+  // }
+  // else
+  // {
+  //   SBUS_RecieveDone = false;
+  // }
 }
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
-{
-  HAL_GPIO_TogglePin(ONBOARD_LED_4_GPIO_Port, ONBOARD_LED_4_Pin);     //debug pin
+{ 
   if (GPIO_Pin == ONBOARD_READ_IT_3_Pin)
   {
     uint32_t time = HAL_GetTick();
-    if (PinInterruptLastTime - time > 5)
+    if (time - PinInterruptLastTime > 3)
     {
       PinInterruptLastTime = time;
       SBUS_RecieveBits();

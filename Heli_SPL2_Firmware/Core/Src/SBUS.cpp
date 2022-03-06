@@ -9,6 +9,7 @@
 
 #include "stm32f2xx_hal.h"
 #include "main.h"
+#include "realMain.h"
 
 #include "usbd_cdc_if.h"
 #include <string.h>
@@ -24,18 +25,20 @@ uint8_t SBUS_CorruptedPackage = false;
 uint8_t SBUSNewPackage = false;
 
 
+
 void SBUS_RecieveBits()
 {
   //collect bits:
 
+  TIM4->CCR1 = (uint16_t)(fastPPM_MinTime + 500 + ((float)SBUS_Channels[2] / 2));
   SBUS_timerCount = TIM11->CNT + SBUS_StartTimeOffset;       //get current clock count register value + time offset
   SBUS_RxBitString[0] = true;
-  //HAL_GPIO_TogglePin(ONBOARD_WRITE_4_GPIO_Port, ONBOARD_WRITE_4_Pin);     //debug pin
+  //HAL_GPIO_TogglePin(ONBOARD_WRITE_3_GPIO_Port, ONBOARD_WRITE_3_Pin);   //debug Pin
   for (size_t i = 1; i < SBUS_NumberOfBits; i++)
   {
-    HAL_GPIO_TogglePin(ONBOARD_WRITE_4_GPIO_Port, ONBOARD_WRITE_4_Pin);     //debug pin
+    ONBOARD_WRITE_3_GPIO_Port->BSRR = (uint32_t)ONBOARD_WRITE_3_Pin << 16U;
     SBUS_RxBitString[i] = ((ONBOARD_READ_IT_3_GPIO_Port->IDR & ONBOARD_READ_IT_3_Pin) != 0 ? true : false);     //if the pin is HIGH then the value is 1 else 0
-
+    ONBOARD_WRITE_3_GPIO_Port->BSRR = ONBOARD_WRITE_3_Pin;
     while ((TIM11->CNT - SBUS_timerCount) < 10)
     {
     }
@@ -68,7 +71,18 @@ void SBUS_PostProcessing()
       SBUS_CorruptedPackage = true;
     }
   }
+  SBUS_Bytes[0] = 0;
+  for (size_t i = 0; i < 8; i++)
+  {
+    SBUS_Bytes[0] |= SBUS_RxBitString[1 + i] << (7 - i);
+  }
+  if (SBUS_Bytes[0] != 0x0FU)
+  {
+    SBUS_CorruptedPackage = true;
+  }
   
+  
+
   //assemble channels:
 
   if (SBUS_CorruptedPackage == false)

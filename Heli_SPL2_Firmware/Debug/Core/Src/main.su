@@ -1,37 +1,19 @@
-<<<<<<< HEAD
-main.cpp:104:5:int main()	8	static
-main.cpp:163:6:void SystemClock_Config()	80	static
-main.cpp:205:13:void MX_NVIC_Init()	8	static
-main.cpp:217:13:void MX_ADC1_Init()	8	static
-main.cpp:256:13:void MX_I2C1_Init()	8	static
-main.cpp:290:13:void MX_TIM11_Init()	8	static
-main.cpp:321:13:void MX_TIM13_Init()	8	static
-main.cpp:352:13:void MX_TIM14_Init()	8	static
-main.cpp:383:13:void MX_GPIO_Init()	48	static
-main.cpp:447:6:void MPU6050_init()	16	static
-main.cpp:456:6:void MPU6050_readValues()	16	static
-main.cpp:496:6:void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef*)	16	static
-main.cpp:531:6:void HAL_GPIO_EXTI_Callback(uint16_t)	24	static
-main.cpp:545:6:void ADC_Select_Channel_11()	24	static
-main.cpp:559:6:void ADC_Select_Channel_12()	24	static
-main.cpp:579:6:void Error_Handler()	4	static,ignoring_inline_asm
-main.cpp:588:1:void __static_initialization_and_destruction_0(int, int)	16	static
-main.cpp:588:1:cpp)	8	static
-=======
-main.cpp:96:5:int main()	32	static
-main.cpp:172:6:void SystemClock_Config()	80	static
-main.cpp:214:13:void MX_NVIC_Init()	8	static
-main.cpp:226:13:void MX_ADC1_Init()	8	static
-main.cpp:265:6:void MX_I2C1_Init()	8	static
-main.cpp:299:13:void MX_TIM11_Init()	8	static
-main.cpp:330:13:void MX_TIM13_Init()	8	static
-main.cpp:361:13:void MX_TIM14_Init()	8	static
-main.cpp:392:13:void MX_GPIO_Init()	48	static
-main.cpp:462:6:void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef*)	16	static
-main.cpp:497:6:void HAL_GPIO_EXTI_Callback(uint16_t)	16	static,ignoring_inline_asm
-main.cpp:509:6:void ADC_Select_Channel_11()	24	static
-main.cpp:523:6:void ADC_Select_Channel_12()	24	static
-main.cpp:543:6:void Error_Handler()	4	static,ignoring_inline_asm
-main.cpp:552:1:void __static_initialization_and_destruction_0(int, int)	16	static
-main.cpp:552:1:cpp)	8	static
->>>>>>> 5bead2de3ec318650516cf277ba61249854310e3
+main.cpp:105:5:int main()	32	static
+main.cpp:194:6:void SystemClock_Config()	80	static
+main.cpp:236:13:void MX_NVIC_Init()	8	static
+main.cpp:248:13:void MX_ADC1_Init()	8	static
+main.cpp:287:6:void MX_I2C1_Init()	8	static
+main.cpp:321:13:void MX_TIM3_Init()	48	static
+main.cpp:370:13:void MX_TIM4_Init()	48	static
+main.cpp:419:13:void MX_TIM11_Init()	8	static
+main.cpp:450:13:void MX_TIM13_Init()	8	static
+main.cpp:481:13:void MX_TIM14_Init()	8	static
+main.cpp:510:13:void MX_DMA_Init()	16	static
+main.cpp:531:13:void MX_GPIO_Init()	48	static
+main.cpp:591:6:void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef*)	16	static
+main.cpp:635:6:void HAL_GPIO_EXTI_Callback(uint16_t)	24	static
+main.cpp:648:6:void ADC_Select_Channel_11()	24	static
+main.cpp:662:6:void ADC_Select_Channel_12()	24	static
+main.cpp:682:6:void Error_Handler()	4	static,ignoring_inline_asm
+main.cpp:691:1:void __static_initialization_and_destruction_0(int, int)	16	static
+main.cpp:691:1:cpp)	8	static

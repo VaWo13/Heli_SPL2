@@ -7,6 +7,8 @@
 extern uint8_t MPU6050_TX_buf[2];
 extern uint8_t MPU6050_RX_buf[16];
 
+extern uint8_t Step;
+
 extern int16_t MPU_Values[6];
 
 extern uint16_t FIFOCounter;

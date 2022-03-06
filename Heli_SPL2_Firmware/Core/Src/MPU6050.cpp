@@ -60,41 +60,46 @@ void MPU6050_Calibration()
 }
 
 void MPU6050_readDMP_Quaterions()
-{ 
+{
   HAL_NVIC_DisableIRQ(EXTI0_IRQn);
-  while (slowPPM1_powered == true)   //assumes that the PPM is running   if it is not running this might crash the programm
-  {
-  }
-  __HAL_TIM_DISABLE(&htim13);
-  while (fastPPM_powered == true)   //assumes that the PPM is running   if it is not running this might crash the programm
-  {
-  }
-  __HAL_TIM_DISABLE(&htim14);
-
 
   writeBit(MPU6050_Adresse, MPU6050_RA_USER_CTRL, MPU6050_USERCTRL_FIFO_RESET_BIT, true); //reset FIFO
+  //MPU6050_TX_buf[0] = MPU6050_RA_USER_CTRL;
+  //HAL_I2C_Master_Transmit_DMA(&hi2c1, MPU6050_Adresse, MPU6050_TX_buf, 1);
+  //HAL_I2C_Master_Receive_DMA(&hi2c1, MPU6050_Adresse, MPU6050_RX_buf, 1);
+  //MPU6050_TX_buf[1] = MPU6050_RX_buf[0] | 0x04; //write bit 2
+  //HAL_I2C_Master_Transmit_DMA(&hi2c1, MPU6050_Adresse, MPU6050_TX_buf, 2);
+
+
 
   readBytes(MPU6050_Adresse, MPU6050_RA_FIFO_COUNTH, 2, MPU6050_RX_buf);  //get FIFO count
+  //MPU6050_TX_buf[0] = MPU6050_RA_FIFO_COUNTH;
+  //HAL_I2C_Master_Transmit_DMA(&hi2c1, MPU6050_Adresse, MPU6050_TX_buf, 1);
+  //HAL_I2C_Master_Receive_DMA(&hi2c1, MPU6050_Adresse, MPU6050_RX_buf, 2);
   FIFOCounter = ((uint16_t)MPU6050_RX_buf[0] << 8) | MPU6050_RX_buf[1];
   while (FIFOCounter < 16)
   {
     readBytes(MPU6050_Adresse, MPU6050_RA_FIFO_COUNTH, 2, MPU6050_RX_buf);  //get FIFO count
+    //MPU6050_TX_buf[0] = MPU6050_RA_FIFO_COUNTH;
+    //HAL_I2C_Master_Transmit_DMA(&hi2c1, MPU6050_Adresse, MPU6050_TX_buf, 1);
+    //HAL_I2C_Master_Receive_DMA(&hi2c1, MPU6050_Adresse, MPU6050_RX_buf, 2);
     FIFOCounter = ((uint16_t)MPU6050_RX_buf[0] << 8) | MPU6050_RX_buf[1];
   }
+  
+  readBytes(MPU6050_Adresse, MPU6050_RA_FIFO_R_W, 16, MPU6050_RX_buf);      //get FIFO data
+  //MPU6050_TX_buf[0] = MPU6050_RA_FIFO_R_W;
+  //HAL_I2C_Mem_Read_DMA(&hi2c1, MPU6050_Adresse, MPU6050_RA_FIFO_R_W, 1, (uint8_t*)MPU6050_RX_buf, 16);
+  //HAL_I2C_Master_Transmit_DMA(&hi2c1, MPU6050_Adresse, MPU6050_TX_buf, 1);
+  
+  //HAL_I2C_Master_Receive(&hi2c1, MPU6050_Adresse, MPU6050_RX_buf, 16, 100);
 
-  
-  
-  readBytes(MPU6050_Adresse, MPU6050_RA_FIFO_R_W, 16, MPU6050_RX_buf);
+  HAL_NVIC_EnableIRQ(EXTI0_IRQn);
 
   Quaternions[0] = (((uint32_t)MPU6050_RX_buf[0] << 24) |  ((uint32_t)MPU6050_RX_buf[1] << 16) |  ((uint32_t)MPU6050_RX_buf[2] << 8) |  MPU6050_RX_buf[3]);
   Quaternions[1] = (((uint32_t)MPU6050_RX_buf[4] << 24) |  ((uint32_t)MPU6050_RX_buf[5] << 16) |  ((uint32_t)MPU6050_RX_buf[6] << 8) |  MPU6050_RX_buf[7]);
   Quaternions[2] = (((uint32_t)MPU6050_RX_buf[8] << 24) |  ((uint32_t)MPU6050_RX_buf[9] << 16) |  ((uint32_t)MPU6050_RX_buf[10] << 8) | MPU6050_RX_buf[11]);
   Quaternions[3] = (((uint32_t)MPU6050_RX_buf[12] << 24) | ((uint32_t)MPU6050_RX_buf[13] << 16) | ((uint32_t)MPU6050_RX_buf[14] << 8) | MPU6050_RX_buf[15]);
-
-
-  __HAL_TIM_ENABLE(&htim13);
-  __HAL_TIM_ENABLE(&htim14);
-  HAL_NVIC_EnableIRQ(EXTI0_IRQn);
+  
 
   // MPU6050_TX_buf[0] = 0x6A;
   // MPU6050_TX_buf[1] = 0xC4;
