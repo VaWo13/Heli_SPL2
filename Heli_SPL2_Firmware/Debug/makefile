@@ -80,7 +80,7 @@ main-build: Heli_SPL2_Firmware.elf secondary-outputs
 
 # Tool invocations
 Heli_SPL2_Firmware.elf: $(OBJS) $(USER_OBJS) D:\Users\valew\Documents\PROJECTS\Heli_SPL2\STM32_Firmware\Github_repo\Heli_SPL2\Heli_SPL2_Firmware\STM32F205RGTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-g++ -o "Heli_SPL2_Firmware.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m3 -T"D:\Users\valew\Documents\PROJECTS\Heli_SPL2\STM32_Firmware\Github_repo\Heli_SPL2\Heli_SPL2_Firmware\STM32F205RGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Heli_SPL2_Firmware.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -lstdc++ -lsupc++ -Wl,--end-group
+	arm-none-eabi-g++ -o "Heli_SPL2_Firmware.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m3 -T"D:\Users\valew\Documents\PROJECTS\Heli_SPL2\STM32_Firmware\Github_repo\Heli_SPL2\Heli_SPL2_Firmware\STM32F205RGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Heli_SPL2_Firmware.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -u _printf_float -Wl,--start-group -lc -lm -lstdc++ -lsupc++ -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 

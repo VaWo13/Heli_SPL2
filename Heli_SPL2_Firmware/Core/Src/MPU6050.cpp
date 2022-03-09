@@ -12,7 +12,7 @@
 uint8_t MPU6050_TX_buf[2];
 uint8_t MPU6050_RX_buf[16];
 int16_t MPU_Values[6];
-int32_t Quaternions[4];
+float MPUoutputQuaternion[4];
 
 uint16_t FIFOCounter = 0;
 
@@ -95,10 +95,10 @@ void MPU6050_readDMP_Quaterions()
 
   HAL_NVIC_EnableIRQ(EXTI0_IRQn);
 
-  Quaternions[0] = (((uint32_t)MPU6050_RX_buf[0] << 24) |  ((uint32_t)MPU6050_RX_buf[1] << 16) |  ((uint32_t)MPU6050_RX_buf[2] << 8) |  MPU6050_RX_buf[3]);
-  Quaternions[1] = (((uint32_t)MPU6050_RX_buf[4] << 24) |  ((uint32_t)MPU6050_RX_buf[5] << 16) |  ((uint32_t)MPU6050_RX_buf[6] << 8) |  MPU6050_RX_buf[7]);
-  Quaternions[2] = (((uint32_t)MPU6050_RX_buf[8] << 24) |  ((uint32_t)MPU6050_RX_buf[9] << 16) |  ((uint32_t)MPU6050_RX_buf[10] << 8) | MPU6050_RX_buf[11]);
-  Quaternions[3] = (((uint32_t)MPU6050_RX_buf[12] << 24) | ((uint32_t)MPU6050_RX_buf[13] << 16) | ((uint32_t)MPU6050_RX_buf[14] << 8) | MPU6050_RX_buf[15]);
+  MPUoutputQuaternion[0] = (((uint32_t)MPU6050_RX_buf[0] << 24) |  ((uint32_t)MPU6050_RX_buf[1] << 16) |  ((uint32_t)MPU6050_RX_buf[2] << 8) |  MPU6050_RX_buf[3]);
+  MPUoutputQuaternion[1] = (((uint32_t)MPU6050_RX_buf[4] << 24) |  ((uint32_t)MPU6050_RX_buf[5] << 16) |  ((uint32_t)MPU6050_RX_buf[6] << 8) |  MPU6050_RX_buf[7]);
+  MPUoutputQuaternion[2] = (((uint32_t)MPU6050_RX_buf[8] << 24) |  ((uint32_t)MPU6050_RX_buf[9] << 16) |  ((uint32_t)MPU6050_RX_buf[10] << 8) | MPU6050_RX_buf[11]);
+  MPUoutputQuaternion[3] = (((uint32_t)MPU6050_RX_buf[12] << 24) | ((uint32_t)MPU6050_RX_buf[13] << 16) | ((uint32_t)MPU6050_RX_buf[14] << 8) | MPU6050_RX_buf[15]);
   
 
   // MPU6050_TX_buf[0] = 0x6A;
@@ -137,6 +137,53 @@ void MPU6050_readDMP_Quaterions()
   //   Quaternions[3] = (((uint32_t)MPU6050_RX_buf[12] << 24) | ((uint32_t)MPU6050_RX_buf[13] << 16) | ((uint32_t)MPU6050_RX_buf[14] << 8) | MPU6050_RX_buf[15]);
 }
 
+/**
+ * @brief Generates the product of 2 quaternions. !!ORDER MATTERS!!
+ * 
+ * @param q1 first Quaternion
+ * @param q2 second Quaternion
+ * @return float product-Quaternion
+ */
+float QuaternionProduct(float q1[4], float q2[4])
+{
+    const float q3[4] = {
+    (q1[0] * q2[0]) - (q1[1] * q2[1]) - (q1[2] * q2[2]) - (q1[3] * q2[3]),
+    (q1[0] * q2[1]) + (q1[1] * q2[0]) + (q1[2] * q2[3]) - (q1[3] * q2[2]),
+    (q1[0] * q2[2]) - (q1[1] * q2[3]) + (q1[2] * q2[0]) + (q1[3] * q2[1]),
+    (q1[0] * q2[3]) + (q1[1] * q2[2]) - (q1[2] * q2[1]) + (q1[3] * q2[0])};
+
+    return q3[4];
+}
+
+/**
+ * @brief takes a Quaternion and inverses it
+ * 
+ * @param q1 quaternion to be inversed
+ * @return float inverse Quaternion
+ */
+float QuaternionInverse(float q1[4])
+{
+    float qi[4] = {
+    q1[0],
+    q1[1] * -1,
+    q1[2] * -1,
+    q1[3] * -1};
+    return qi[4];
+}
+
+/**
+ * @brief (SLERP)(Spherical Linear Interpolation): Gets the quaternion thats needed to get from
+ *  the start quaternion(q1) to the end Quaternion(q2)
+ * 
+ * @param q1 start quaternion
+ * @param q2 end quaternion
+ * @return float interpolation quaternion
+ */
+float QuaternionSLERP(float q1[4], float q2[4])
+{
+    float qi[4] = {QuaternionInverse(&q1[4])};  
+    return QuaternionProduct(&q2[4], &qi[4]);
+}
 
 
 

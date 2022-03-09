@@ -13,7 +13,7 @@ extern int16_t MPU_Values[6];
 
 extern uint16_t FIFOCounter;
 
-extern int32_t Quaternions[4];
+extern float MPUoutputQuaternion[4];
 
 
 
@@ -27,6 +27,10 @@ void MPU6050_Calibration();
 void MPU6050_readDMP_Quaterions();
 
 uint8_t MPU6050_init();
+
+float QuaternionProduct(float q1[4], float q2[4]);
+float QuaternionInverse(float q1[4]);
+float QuaternionSLERP(float q1[4], float q2[4]);
 
 // void MPU6050_WriteByte(uint8_t RegisterAdresse, uint8_t data, uint16_t size = 1);
 // 
