@@ -1,3 +1,4 @@
+#include "PID.h"
 #include "MPU6050.h"
 #include "I2Cdev.h"
 
@@ -12,11 +13,8 @@
 uint8_t MPU6050_TX_buf[2];
 uint8_t MPU6050_RX_buf[16];
 int16_t MPU_Values[6];
-float MPUoutputQuaternion[4];
 
 uint16_t FIFOCounter = 0;
-
-
 
 
 
@@ -54,10 +52,6 @@ uint16_t FIFOCounter = 0;
 //   __HAL_TIM_ENABLE(&htim14);
 // }
 
-void MPU6050_Calibration()
-{
-
-}
 
 void MPU6050_readDMP_Quaterions()
 {
@@ -137,57 +131,34 @@ void MPU6050_readDMP_Quaterions()
   //   Quaternions[3] = (((uint32_t)MPU6050_RX_buf[12] << 24) | ((uint32_t)MPU6050_RX_buf[13] << 16) | ((uint32_t)MPU6050_RX_buf[14] << 8) | MPU6050_RX_buf[15]);
 }
 
-/**
- * @brief Generates the product of 2 quaternions. !!ORDER MATTERS!!
- * 
- * @param q1 first Quaternion
- * @param q2 second Quaternion
- * @return float product-Quaternion
- */
-float QuaternionProduct(float q1[4], float q2[4])
+void MPU6050_resetFIFO()
 {
-    const float q3[4] = {
-    (q1[0] * q2[0]) - (q1[1] * q2[1]) - (q1[2] * q2[2]) - (q1[3] * q2[3]),
-    (q1[0] * q2[1]) + (q1[1] * q2[0]) + (q1[2] * q2[3]) - (q1[3] * q2[2]),
-    (q1[0] * q2[2]) - (q1[1] * q2[3]) + (q1[2] * q2[0]) + (q1[3] * q2[1]),
-    (q1[0] * q2[3]) + (q1[1] * q2[2]) - (q1[2] * q2[1]) + (q1[3] * q2[0])};
-
-    return q3[4];
+    writeBit(MPU6050_Adresse, MPU6050_RA_USER_CTRL, MPU6050_USERCTRL_FIFO_RESET_BIT, true); //reset FIFO
 }
 
-/**
- * @brief takes a Quaternion and inverses it
- * 
- * @param q1 quaternion to be inversed
- * @return float inverse Quaternion
- */
-float QuaternionInverse(float q1[4])
+void MPU6050_readQuaternionBytes()
 {
-    float qi[4] = {
-    q1[0],
-    q1[1] * -1,
-    q1[2] * -1,
-    q1[3] * -1};
-    return qi[4];
+    readBytes(MPU6050_Adresse, MPU6050_RA_FIFO_COUNTH, 2, MPU6050_RX_buf);  //get FIFO count
+    FIFOCounter = (((uint16_t)MPU6050_RX_buf[0]) << 8) | MPU6050_RX_buf[1];
+    while (FIFOCounter < 42)
+    {
+      HAL_GPIO_TogglePin(ONBOARD_WRITE_2_GPIO_Port, ONBOARD_WRITE_2_Pin);   //debug Pin
+      readBytes(MPU6050_Adresse, MPU6050_RA_FIFO_COUNTH, 2, MPU6050_RX_buf);  //get FIFO count
+      FIFOCounter = (((uint16_t)MPU6050_RX_buf[0]) << 8) | MPU6050_RX_buf[1];
+    }
 }
 
-/**
- * @brief (SLERP)(Spherical Linear Interpolation): Gets the quaternion thats needed to get from
- *  the start quaternion(q1) to the end Quaternion(q2)
- * 
- * @param q1 start quaternion
- * @param q2 end quaternion
- * @return float interpolation quaternion
- */
-float QuaternionSLERP(float q1[4], float q2[4])
+void MPU6050_ConvertToQuaternions()
 {
-    float qi[4] = {QuaternionInverse(&q1[4])};  
-    return QuaternionProduct(&q2[4], &qi[4]);
+    if ((FIFOCounter == 42) | (FIFOCounter == 84))
+    {
+      readBytes(MPU6050_Adresse, MPU6050_RA_FIFO_R_W, 16, MPU6050_RX_buf);      //get FIFO data
+      MPUoutputQuaternion[0] = (float)(((int32_t)MPU6050_RX_buf[0] << 24) |  ((int32_t)MPU6050_RX_buf[1] << 16) |  ((int32_t)MPU6050_RX_buf[2] << 8) |  MPU6050_RX_buf[3 ]) / 1073741824;
+      MPUoutputQuaternion[1] = (float)(((int32_t)MPU6050_RX_buf[4] << 24) |  ((int32_t)MPU6050_RX_buf[5] << 16) |  ((int32_t)MPU6050_RX_buf[6] << 8) |  MPU6050_RX_buf[7 ]) / 1073741824;
+      MPUoutputQuaternion[2] = (float)(((int32_t)MPU6050_RX_buf[8] << 24) |  ((int32_t)MPU6050_RX_buf[9] << 16) |  ((int32_t)MPU6050_RX_buf[10] << 8) | MPU6050_RX_buf[11]) / 1073741824;
+      MPUoutputQuaternion[3] = (float)(((int32_t)MPU6050_RX_buf[12] << 24) | ((int32_t)MPU6050_RX_buf[13] << 16) | ((int32_t)MPU6050_RX_buf[14] << 8) | MPU6050_RX_buf[15]) / 1073741824;
+    }
 }
-
-
-
-
 
 
 

@@ -23,6 +23,7 @@
 #include "realMain.h"
 #include "SBUS.h"
 #include "MPU6050.h"
+#include "PID.h"
 
 #include "usbd_cdc_if.h"
 #include <string.h>
@@ -135,6 +136,7 @@ int main(void)
   MX_TIM13_Init();
   MX_TIM14_Init();
   MX_DMA_Init();
+  
 
   
 
@@ -171,6 +173,15 @@ int main(void)
 
   HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
   HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_1);
+
+  HAL_Delay(5000);
+  MPU6050_resetFIFO();
+  HAL_Delay(2);
+  MPU6050_readQuaternionBytes();
+  MPU6050_ConvertToQuaternions();
+
+
+  MPU6050_Calibration();
 
   HAL_NVIC_EnableIRQ(EXTI0_IRQn);
   /* USER CODE END 2 */

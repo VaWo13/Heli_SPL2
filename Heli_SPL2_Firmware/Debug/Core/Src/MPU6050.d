@@ -1,5 +1,5 @@
-Core/Src/MPU6050.o: ../Core/Src/MPU6050.cpp ../Core/Inc/MPU6050.h \
- ../Core/Inc/I2Cdev.h ../Core/Inc/main.h \
+Core/Src/MPU6050.o: ../Core/Src/MPU6050.cpp ../Core/Inc/PID.h \
+ ../Core/Inc/MPU6050.h ../Core/Inc/I2Cdev.h ../Core/Inc/main.h \
  ../Drivers/STM32F2xx_HAL_Driver/Inc/stm32f2xx_hal.h \
  ../Core/Inc/stm32f2xx_hal_conf.h \
  ../Drivers/STM32F2xx_HAL_Driver/Inc/stm32f2xx_hal_rcc.h \
@@ -40,6 +40,8 @@ Core/Src/MPU6050.o: ../Core/Src/MPU6050.cpp ../Core/Inc/MPU6050.h \
  ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_core.h \
  ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h \
  ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ctlreq.h
+
+../Core/Inc/PID.h:
 
 ../Core/Inc/MPU6050.h:
 

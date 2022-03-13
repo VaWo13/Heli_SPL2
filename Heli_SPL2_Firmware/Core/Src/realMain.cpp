@@ -2,6 +2,7 @@
 #include "realMain.h"
 #include "SBUS.h"
 #include "MPU6050.h"
+#include "PID.h"
 #include "I2Cdev.h"
 
 #include "usbd_cdc_if.h"
@@ -13,11 +14,18 @@ uint32_t timestamp = 0;
 uint16_t adcValuesArray[2];
 uint16_t angle;
 uint8_t Step = 0;
+uint16_t Debug_CNT = TIM4->CNT;
+uint16_t Debug_diff = 0;
+//Debug_CNT = TIM4->CNT;
+//Debug_diff = TIM4->CNT - Debug_CNT;
 
 void loop()
 {
   if (TIM4->CNT < 1000)
   {
+
+
+
     switch (Step)
     {
     case 0:
@@ -26,10 +34,6 @@ void loop()
     case 4:
       HAL_NVIC_DisableIRQ(EXTI0_IRQn);
       break;
-    case 5:
-      HAL_NVIC_DisableIRQ(EXTI0_IRQn);
-      break;
-
     default:
       break;
     }
@@ -40,36 +44,39 @@ void loop()
 	  adcValuesArray[1] = (uint16_t)ADC1->DR;
     angle = motorAngle(adcValuesArray[1] - 1250, adcValuesArray[0] - 1250);
     TIM4->CCR1 = (uint16_t)(fastPPM_MinTime + 500 + ((float)SBUS_Channels[2] / 2) + ((float)sin((angle + 45) * (M_PI / 180)) * ((float)SBUS_Channels[0] / 10)) + ((float)cos((angle + 45) * (M_PI / 180)) * ((float)SBUS_Channels[1] / 10)));
-
+    
+    
+    
+    
 
     switch (Step)
     {
     case 0:   //get quaternions
-      
-      writeBit(MPU6050_Adresse, MPU6050_RA_USER_CTRL, MPU6050_USERCTRL_FIFO_RESET_BIT, true); //reset FIFO
+      MPU6050_resetFIFO();
       HAL_NVIC_EnableIRQ(EXTI0_IRQn);
       break;
     case 1:
-      if (SBUSNewPackage == true)
-      {
-        SBUS_PostProcessing();
-      }
+      if (SBUSNewPackage == true) SBUS_PostProcessing();
       break;
     case 2:
       for (size_t i = 0; i < 1; i++)
       {
         unsigned char msg[300];
-	      sprintf((char*)msg," %f %f %f %f %hd %hd %hd %hd %hd %hd \r\n"                                                                                                                                                                                                                                                                                                      \
-        , (MPUoutputQuaternion[0])                                                                                                                                                                                                                                                                                                                                          \
-        , (MPUoutputQuaternion[1])                                                                                                                                                                                                                                                                                                                                          \
-        , (MPUoutputQuaternion[2])                                                                                                                                                                                                                                                                                                                                          \
-        , (MPUoutputQuaternion[3])                                                                                                                                                                                                                                                                                                                                          \
-        , 2 * (int16_t)(((float)atan((float)MPUoutputQuaternion[3] / (float)MPUoutputQuaternion[2]) * 180) / M_PI)                                                                                                                                                                                                                                                          \
-        , 2 * (int16_t)(((float)atan((float)MPUoutputQuaternion[3] / (float)MPUoutputQuaternion[1]) * 180) / M_PI)                                                                                                                                                                                                                                                          \
-        , 2 * (int16_t)(((float)atan((float)MPUoutputQuaternion[1] / (float)MPUoutputQuaternion[2]) * 180) / M_PI)                                                                                                                                                                                                                                                          \
-        , 2 * (int16_t)(((float)atan((float)MPUoutputQuaternion[0] / (float)MPUoutputQuaternion[1]) * 180) / M_PI)                                                                                                                                                                                                                                                          \
-        , 2 * (int16_t)(((float)acos((float)MPUoutputQuaternion[0] / (float)1073741824) * 180) / M_PI)                                                                                                                                                                                                                                                                      \
-        , (int16_t)((float)sqrt((((float)MPUoutputQuaternion[1] / (float)1073741824) * ((float)MPUoutputQuaternion[1] / (float)1073741824)) + (((float)MPUoutputQuaternion[2] / (float)1073741824) * ((float)MPUoutputQuaternion[2] / (float)1073741824)) + (((float)MPUoutputQuaternion[3] / (float)1073741824) * ((float)MPUoutputQuaternion[3] / (float)1073741824))))); \
+	      sprintf((char*)msg," %f %f %f %f %f %f %f %f %hd %hd %hd %hd %hd %hu \r\n"                                    \
+        , (MPUoutputQuaternion[0] * 1000)                                                                                    \
+        , (MPUoutputQuaternion[1] * 1000)                                                                                    \
+        , (MPUoutputQuaternion[2] * 1000)                                                                                    \
+        , (MPUoutputQuaternion[3] * 1000)                                                                                    \
+        , (LoopWXQuaternion[0] * 1000)                                                                                         \
+        , (LoopWXQuaternion[1] * 1000)                                                                                         \
+        , (LoopWXQuaternion[2] * 1000)                                                                                         \
+        , (LoopWXQuaternion[3] * 1000)                                                                                         \
+        , 2 * (int16_t)(((float)atan((float)MPUoutputQuaternion[3] / (float)MPUoutputQuaternion[2]) * 180) / M_PI)    \
+        , 2 * (int16_t)(((float)atan((float)MPUoutputQuaternion[3] / (float)MPUoutputQuaternion[1]) * 180) / M_PI)    \
+        , 2 * (int16_t)(((float)atan((float)MPUoutputQuaternion[1] / (float)MPUoutputQuaternion[2]) * 180) / M_PI)    \
+        , 2 * (int16_t)(((float)atan((float)MPUoutputQuaternion[0] / (float)MPUoutputQuaternion[1]) * 180) / M_PI)    \
+        , 2 * (int16_t)(((float)acos((float)MPUoutputQuaternion[0] / (float)1073741824) * 180) / M_PI)                \
+        , Debug_diff);                                                                                                \
 	      uint8_t x = 0;
 	      while (msg[x] != NULL)
 	      {
@@ -99,31 +106,15 @@ void loop()
       //  }
       //  CDC_Transmit_FS((unsigned char*)msgTransmit, sizeof(msgTransmit));
       //}
-
       break;
     case 3:
-      
+      Debug_CNT = TIM4->CNT;
+      getWXQuaternion();
+      Debug_diff = TIM4->CNT - Debug_CNT;
       break;
     case 4:
-      readBytes(MPU6050_Adresse, MPU6050_RA_FIFO_COUNTH, 2, MPU6050_RX_buf);  //get FIFO count
-      FIFOCounter = (((uint16_t)MPU6050_RX_buf[0]) << 8) | MPU6050_RX_buf[1];
-      while (FIFOCounter < 42)
-      {
-        HAL_GPIO_TogglePin(ONBOARD_WRITE_2_GPIO_Port, ONBOARD_WRITE_2_Pin);   //debug Pin
-        readBytes(MPU6050_Adresse, MPU6050_RA_FIFO_COUNTH, 2, MPU6050_RX_buf);  //get FIFO count
-        FIFOCounter = (((uint16_t)MPU6050_RX_buf[0]) << 8) | MPU6050_RX_buf[1];
-      }
-      HAL_NVIC_EnableIRQ(EXTI0_IRQn);
-      break;
-    case 5:
-      if ((FIFOCounter == 42) | (FIFOCounter == 84))
-      {
-        readBytes(MPU6050_Adresse, MPU6050_RA_FIFO_R_W, 16, MPU6050_RX_buf);      //get FIFO data
-        MPUoutputQuaternion[0] = (float)(((int32_t)MPU6050_RX_buf[0] << 24) |  ((int32_t)MPU6050_RX_buf[1] << 16) |  ((int32_t)MPU6050_RX_buf[2] << 8) |  MPU6050_RX_buf[3 ]) / 1073741824;
-        MPUoutputQuaternion[1] = (float)(((int32_t)MPU6050_RX_buf[4] << 24) |  ((int32_t)MPU6050_RX_buf[5] << 16) |  ((int32_t)MPU6050_RX_buf[6] << 8) |  MPU6050_RX_buf[7 ]) / 1073741824;
-        MPUoutputQuaternion[2] = (float)(((int32_t)MPU6050_RX_buf[8] << 24) |  ((int32_t)MPU6050_RX_buf[9] << 16) |  ((int32_t)MPU6050_RX_buf[10] << 8) | MPU6050_RX_buf[11]) / 1073741824;
-        MPUoutputQuaternion[3] = (float)(((int32_t)MPU6050_RX_buf[12] << 24) | ((int32_t)MPU6050_RX_buf[13] << 16) | ((int32_t)MPU6050_RX_buf[14] << 8) | MPU6050_RX_buf[15]) / 1073741824;
-      }
+      MPU6050_readQuaternionBytes();
+      MPU6050_ConvertToQuaternions();
       HAL_NVIC_EnableIRQ(EXTI0_IRQn);
       break;
     case 9:
