@@ -181,7 +181,7 @@ int main(void)
   MPU6050_ConvertToQuaternions();
 
 
-  MPU6050_Calibration();
+  MPU6050_GetOriginQuaternion();
 
   HAL_NVIC_EnableIRQ(EXTI0_IRQn);
   /* USER CODE END 2 */

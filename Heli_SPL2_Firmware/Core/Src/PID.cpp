@@ -1,4 +1,5 @@
 #include "PID.h"
+#include "SBUS.h"
 
 #include "stm32f2xx_hal.h"
 #include "main.h"
@@ -7,6 +8,14 @@
 #include <stdio.h>
 #include <math.h>
 
+float PID_Pitch_xw_diff;
+float PID_Roll_xw_diff;
+float PID_Yaw_xw_diff;
+
+float PID_Pitch_y;
+float PID_Roll_y;
+float PID_Yaw_y;
+
 float MPUoutputQuaternion[4];
 float OriginQuaternion[4];
 float OriginToOutputQuaternion[4];
@@ -14,16 +23,17 @@ float FrameOriginQuaternion[4] = {1, 0, 0, 0};
 float LoopWQuaternion[4] = {1, 0, 0, 0};
 float LoopXQuaternion[4];
 float LoopWXQuaternion[4];
+float updateQuaternion[4];
 
-
-
-
-
-
-
-
-
-
+float Pitch_PID_k[3] = {1, 1, 1};
+float Roll_PID_k[3]  = {1, 1, 1};
+float Yaw_PID_k[3]   = {1, 1, 1};
+float Pitch_I_Sum;
+float Roll_I_Sum;
+float Yaw_I_Sum;
+float Pitch_D_old;
+float Roll_D_old;
+float Yaw_D_old;
 
 
 
@@ -34,6 +44,52 @@ void getWXQuaternion()
   LoopWXQuaternion[1] = *(p + 1);
   LoopWXQuaternion[2] = *(p + 2);
   LoopWXQuaternion[3] = *(p + 3);
+
+  //difference x-w in degrees
+  PID_Pitch_xw_diff = 2 * (((float)asin(LoopWXQuaternion[1]) * 180) / M_PI);
+  PID_Roll_xw_diff  = 2 * (((float)asin(LoopWXQuaternion[2]) * 180) / M_PI);
+  PID_Yaw_xw_diff   = 2 * (((float)atan(LoopWXQuaternion[3] / LoopWXQuaternion[0]) * 180) / M_PI);
+}
+
+void Update_FrameOriginQuaternion()
+{
+  updateQuaternion[0] = cos((float)SBUS_Channels[3] / 10000);
+  updateQuaternion[1] = (float)sin((float)SBUS_Channels[1] / (float)10000);
+  updateQuaternion[2] = (float)sin((float)SBUS_Channels[0] / (float)10000);
+  updateQuaternion[3] = sin((float)SBUS_Channels[3] / 10000);
+
+  float *p1 = QuaternionNormalize(&updateQuaternion[0]);
+  updateQuaternion[0] = *p1;
+  updateQuaternion[1] = *(p1 + 1);
+  updateQuaternion[2] = *(p1 + 2);
+  updateQuaternion[3] = *(p1 + 3);
+
+  float *p2 = QuaternionProduct(&updateQuaternion[0], &LoopWQuaternion[0]);
+  LoopWQuaternion[0] = *p2;
+  LoopWQuaternion[1] = *(p2 + 1);
+  LoopWQuaternion[2] = *(p2 + 2);
+  LoopWQuaternion[3] = *(p2 + 3);
+
+    float *p3 = QuaternionNormalize(&LoopWQuaternion[0]);
+  LoopWQuaternion[0] = *p3;
+  LoopWQuaternion[1] = *(p3 + 1);
+  LoopWQuaternion[2] = *(p3 + 2);
+  LoopWQuaternion[3] = *(p3 + 3);
+}
+
+void Update_PID()
+{
+  Pitch_I_Sum += PID_Pitch_xw_diff;
+  Roll_I_Sum  += PID_Roll_xw_diff ;
+  Yaw_I_Sum   += PID_Yaw_xw_diff  ;
+
+  PID_Pitch_y = (PID_Pitch_xw_diff * Pitch_PID_k[0]) + (Pitch_I_Sum * Pitch_PID_k[1]) + ((Pitch_D_old - PID_Pitch_xw_diff) * Pitch_PID_k[2]);
+  PID_Roll_y  = (PID_Roll_xw_diff  * Roll_PID_k[0] ) + (Roll_I_Sum  * Roll_PID_k[1] ) + ((Roll_D_old  - PID_Roll_xw_diff ) * Roll_PID_k[2] );
+  PID_Yaw_y   = (PID_Yaw_xw_diff   * Yaw_PID_k[0]  ) + (Yaw_I_Sum   * Yaw_PID_k[1]  ) + ((Yaw_D_old   - PID_Yaw_xw_diff  ) * Yaw_PID_k[2]  );
+
+  Pitch_D_old = PID_Pitch_xw_diff;
+  Roll_D_old  = PID_Roll_xw_diff ;
+  Yaw_D_old   = PID_Yaw_xw_diff  ;
 }
 
 /**
@@ -82,7 +138,24 @@ float * QuaternionSLERP(float *q1, float *q2)
   return QuaternionProduct(&q2[0], QuaternionInverse(&q1[0]));
 }
 
-void MPU6050_Calibration()
+/**
+ * @brief normalizes a quaternion
+ * 
+ * @param q1 quaternion to be normalized
+ * @return float* pointer to normalized quaternion
+ */
+float *QuaternionNormalize(float *q1)
+{
+  float vectorlength = sqrt((q1[0] * q1[0]) + (q1[1] * q1[1]) + (q1[2] * q1[2]) + (q1[3] * q1[3]));
+  static float qn[4];
+  qn[0] = q1[0] / vectorlength;
+  qn[1] = q1[1] / vectorlength;
+  qn[2] = q1[2] / vectorlength;
+  qn[3] = q1[3] / vectorlength;
+  return qn;
+}
+
+void MPU6050_GetOriginQuaternion()
 {
   OriginQuaternion[0] = MPUoutputQuaternion[0];
   OriginQuaternion[1] = MPUoutputQuaternion[1];

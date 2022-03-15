@@ -62,21 +62,26 @@ void loop()
       for (size_t i = 0; i < 1; i++)
       {
         unsigned char msg[300];
-	      sprintf((char*)msg," %f %f %f %f %f %f %f %f %hd %hd %hd %hd %hd %hu \r\n"                                    \
-        , (MPUoutputQuaternion[0] * 1000)                                                                                    \
-        , (MPUoutputQuaternion[1] * 1000)                                                                                    \
-        , (MPUoutputQuaternion[2] * 1000)                                                                                    \
-        , (MPUoutputQuaternion[3] * 1000)                                                                                    \
-        , (LoopWXQuaternion[0] * 1000)                                                                                         \
-        , (LoopWXQuaternion[1] * 1000)                                                                                         \
-        , (LoopWXQuaternion[2] * 1000)                                                                                         \
-        , (LoopWXQuaternion[3] * 1000)                                                                                         \
-        , 2 * (int16_t)(((float)atan((float)MPUoutputQuaternion[3] / (float)MPUoutputQuaternion[2]) * 180) / M_PI)    \
-        , 2 * (int16_t)(((float)atan((float)MPUoutputQuaternion[3] / (float)MPUoutputQuaternion[1]) * 180) / M_PI)    \
-        , 2 * (int16_t)(((float)atan((float)MPUoutputQuaternion[1] / (float)MPUoutputQuaternion[2]) * 180) / M_PI)    \
-        , 2 * (int16_t)(((float)atan((float)MPUoutputQuaternion[0] / (float)MPUoutputQuaternion[1]) * 180) / M_PI)    \
-        , 2 * (int16_t)(((float)acos((float)MPUoutputQuaternion[0] / (float)1073741824) * 180) / M_PI)                \
-        , Debug_diff);                                                                                                \
+	      sprintf((char*)msg," %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %hd %hd %hd %hu \r\n"                      \
+        , (MPUoutputQuaternion[0] * 1000)                                                                            \
+        , (MPUoutputQuaternion[1] * 1000)                                                                            \
+        , (MPUoutputQuaternion[2] * 1000)                                                                            \
+        , (MPUoutputQuaternion[3] * 1000)                                                                            \
+        , (LoopWXQuaternion[0] * 1000)                                                                               \
+        , (LoopWXQuaternion[1] * 1000)                                                                               \
+        , (LoopWXQuaternion[2] * 1000)                                                                               \
+        , (LoopWXQuaternion[3] * 1000)                                                                               \
+        ,   (updateQuaternion[0] * 1000)                                                                             \
+        ,   (updateQuaternion[1] * 1000)                                                                             \
+        ,   (updateQuaternion[2] * 1000)                                                                             \
+        ,   (updateQuaternion[3] * 1000)                                                                             \
+        , PID_Pitch_xw_diff                                                                                          \
+        , PID_Roll_xw_diff                                                                                           \
+        , PID_Yaw_xw_diff                                                                                            \
+        , 2 * (int16_t)(((float)atan((float)MPUoutputQuaternion[0] / (float)MPUoutputQuaternion[1]) * 180) / M_PI)   \
+        , 2 * (int16_t)(((float)acos((float)MPUoutputQuaternion[0] / (float)1073741824) * 180) / M_PI)               \
+        , SBUS_Channels[3]                                                                                           \
+        , Debug_diff);                                                                                               \
 	      uint8_t x = 0;
 	      while (msg[x] != NULL)
 	      {
@@ -110,6 +115,7 @@ void loop()
     case 3:
       Debug_CNT = TIM4->CNT;
       getWXQuaternion();
+      Update_FrameOriginQuaternion();
       Debug_diff = TIM4->CNT - Debug_CNT;
       break;
     case 4:

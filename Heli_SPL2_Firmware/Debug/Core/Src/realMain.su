@@ -1,6 +1,6 @@
 cmath:87:3:constexpr float std::acos(float)	16	static
 cmath:125:3:constexpr float std::atan(float)	16	static
-realMain.cpp:22:6:void loop()	496	dynamic
-realMain.cpp:197:10:uint16_t motorAngle(int32_t, int32_t)	40	static
-realMain.cpp:247:1:void __static_initialization_and_destruction_0(int, int)	16	static
-realMain.cpp:247:1:cpp)	8	static
+realMain.cpp:22:6:void loop()	592	dynamic
+realMain.cpp:203:10:uint16_t motorAngle(int32_t, int32_t)	40	static
+realMain.cpp:253:1:void __static_initialization_and_destruction_0(int, int)	16	static
+realMain.cpp:253:1:cpp)	8	static
