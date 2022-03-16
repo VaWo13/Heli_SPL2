@@ -146,24 +146,6 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
 
-  HAL_NVIC_DisableIRQ(EXTI0_IRQn);
-
-  HAL_Delay(50);
-  MPU6050 mpu;
-  HAL_Delay(50);
-  mpu.initialize();
-  HAL_Delay(50);
-  mpu.dmpInitialize();
-  HAL_Delay(50);
-  mpu.setDMPEnabled(true);
-  HAL_Delay(50);
-
-  mpu.setXGyroOffset(-169);
-  mpu.setYGyroOffset(165);
-  mpu.setZGyroOffset(110);
-  mpu.setXAccelOffset(4599);
-  mpu.setYAccelOffset(-951);
-  mpu.setZAccelOffset(1930);
 
   HAL_TIM_Base_Start_IT(&htim3);
   HAL_TIM_Base_Start_IT(&htim4);
@@ -174,11 +156,42 @@ int main(void)
   HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
   HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_1);
 
-  HAL_Delay(5000);
+  TIM4->CCR1 = fastPPM_MinTime;
+  TIM3->CCR1 = slowPPM1_MinTime;
+
+  HAL_Delay(3000);
+
+  while (SBUSNewPackage != true)
+  {
+  }
+
+  HAL_NVIC_DisableIRQ(EXTI0_IRQn);
+
+  HAL_Delay(50);
+  MPU6050 mpu;
+  HAL_Delay(50);
+  mpu.initialize();
+  HAL_Delay(50);
+  mpu.dmpInitialize();
+  HAL_Delay(50);
+
+
+  mpu.setXGyroOffset(-169);
+  mpu.setYGyroOffset(165);
+  mpu.setZGyroOffset(110);
+  mpu.setXAccelOffset(4599);
+  mpu.setYAccelOffset(-951);
+  mpu.setZAccelOffset(1930);
+
+  HAL_Delay(50);
+  mpu.setDMPEnabled(true);
+
+  HAL_Delay(2000);
   MPU6050_resetFIFO();
   HAL_Delay(2);
-  MPU6050_readQuaternionBytes();
-  MPU6050_ConvertToQuaternions();
+  //MPU6050_readQuaternionBytes();
+
+  //MPU6050_ConvertToQuaternions();
 
 
   MPU6050_GetOriginQuaternion();
@@ -658,29 +671,44 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 
 void ADC_Select_Channel_11()
 {
-  ADC_ChannelConfTypeDef sConfig = {0};
+  // ADC_ChannelConfTypeDef sConfig = {0};
   /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
   */
-  sConfig.Channel = ADC_CHANNEL_11;
-  sConfig.Rank = 1;
-  sConfig.SamplingTime = ADC_SAMPLETIME_15CYCLES;
-  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
-  {
-    Error_Handler();
-  }
+  // sConfig.Channel = ADC_CHANNEL_11;
+  // sConfig.Rank = 1;
+  // sConfig.SamplingTime = ADC_SAMPLETIME_15CYCLES;
+  // if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
+  // {
+    // Error_Handler();
+  // }
+  ADC1->SMPR1 &= ~ADC_SMPR1(ADC_SMPR1_SMP10, ADC_CHANNEL_11);
+  ADC1->SMPR1 |= ADC_SMPR1(ADC_SAMPLETIME_15CYCLES, ADC_CHANNEL_11);
+  
+  ADC1->SQR3 &= ~ADC_SQR3_RK(ADC_SQR3_SQ1, 1);
+  ADC1->SQR3 |= ADC_SQR3_RK(ADC_CHANNEL_11, 1);
+
+
+
   HAL_ADC_Start(&hadc1);
 }
 void ADC_Select_Channel_12()
 {
-  ADC_ChannelConfTypeDef sConfig = {0};
-  /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
-  */
-  sConfig.Channel = ADC_CHANNEL_12;
-  sConfig.Rank = 1;
-  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
-  {
-    Error_Handler();
-  }
+  // ADC_ChannelConfTypeDef sConfig = {0};
+  // /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
+  // */
+  // sConfig.Channel = ADC_CHANNEL_12;
+  // sConfig.Rank = 1;
+  // if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
+  // {
+  //   Error_Handler();
+  // }
+
+  ADC1->SMPR1 &= ~ADC_SMPR1(ADC_SMPR1_SMP10, ADC_CHANNEL_12);
+  ADC1->SMPR1 |= ADC_SMPR1(ADC_SAMPLETIME_15CYCLES, ADC_CHANNEL_12);
+  
+  ADC1->SQR3 &= ~ADC_SQR3_RK(ADC_SQR3_SQ1, 1);
+  ADC1->SQR3 |= ADC_SQR3_RK(ADC_CHANNEL_12, 1);
+
   HAL_ADC_Start(&hadc1);
 }
 

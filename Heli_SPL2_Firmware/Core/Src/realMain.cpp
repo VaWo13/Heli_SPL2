@@ -12,7 +12,7 @@
 
 uint32_t timestamp = 0;
 uint16_t adcValuesArray[2];
-uint16_t angle;
+uint16_t angle = 0;
 uint8_t Step = 0;
 uint16_t Debug_CNT = TIM4->CNT;
 uint16_t Debug_diff = 0;
@@ -34,17 +34,23 @@ void loop()
     case 4:
       HAL_NVIC_DisableIRQ(EXTI0_IRQn);
       break;
+    case 5:
+      HAL_NVIC_DisableIRQ(EXTI0_IRQn);
+      break;
     default:
       break;
     }
+
+    HAL_GPIO_TogglePin(ONBOARD_LED_2_GPIO_Port, ONBOARD_LED_2_Pin);   //debug Pin
     //get motor angle and update PPM_OnTime
     ADC_Select_Channel_11();
 	  adcValuesArray[0] = (uint16_t)ADC1->DR;
 	  ADC_Select_Channel_12();
 	  adcValuesArray[1] = (uint16_t)ADC1->DR;
-    angle = motorAngle(adcValuesArray[1] - 1250, adcValuesArray[0] - 1250);
-    TIM4->CCR1 = (uint16_t)(fastPPM_MinTime + 500 + ((float)SBUS_Channels[2] / 2) + ((float)sin((angle + 45) * (M_PI / 180)) * ((float)SBUS_Channels[0] / 10)) + ((float)cos((angle + 45) * (M_PI / 180)) * ((float)SBUS_Channels[1] / 10)));
-    
+    //angle = motorAngle(adcValuesArray[1] - 1250, adcValuesArray[0] - 1250);
+    //angle = ((atan2((float)adcValuesArray[1] - 1250, (float)adcValuesArray[0] - 1250) * 180) / M_PI) + 180;
+    HAL_GPIO_TogglePin(ONBOARD_LED_2_GPIO_Port, ONBOARD_LED_2_Pin);   //debug Pin
+    TIM4->CCR1 = (uint16_t)(fastPPM_MinTime + 500 + ((float)SBUS_Channels[2] / 2) + ((float)sin((angle + 45) * (M_PI / 180)) * (PID_Pitch_y / 10)) + ((float)cos((angle + 45) * (M_PI / 180)) * ((float)PID_Roll_y / 10)));
     
     
     
@@ -62,26 +68,31 @@ void loop()
       for (size_t i = 0; i < 1; i++)
       {
         unsigned char msg[300];
-	      sprintf((char*)msg," %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %hd %hd %hd %hu \r\n"                      \
-        , (MPUoutputQuaternion[0] * 1000)                                                                            \
-        , (MPUoutputQuaternion[1] * 1000)                                                                            \
-        , (MPUoutputQuaternion[2] * 1000)                                                                            \
-        , (MPUoutputQuaternion[3] * 1000)                                                                            \
-        , (LoopWXQuaternion[0] * 1000)                                                                               \
-        , (LoopWXQuaternion[1] * 1000)                                                                               \
-        , (LoopWXQuaternion[2] * 1000)                                                                               \
-        , (LoopWXQuaternion[3] * 1000)                                                                               \
-        ,   (updateQuaternion[0] * 1000)                                                                             \
-        ,   (updateQuaternion[1] * 1000)                                                                             \
-        ,   (updateQuaternion[2] * 1000)                                                                             \
-        ,   (updateQuaternion[3] * 1000)                                                                             \
+	      sprintf((char*)msg,"%f %f %f %f %f %f %f %f %f %hd %hd %hu \r\n"                                         \
+        // , (MPUoutputQuaternion[0] * 1000)                                                                            
+        // , (MPUoutputQuaternion[1] * 1000)                                                                            
+        // , (MPUoutputQuaternion[2] * 1000)                                                                            
+        // , (MPUoutputQuaternion[3] * 1000)                                                                            
+        // , (LoopWXQuaternion[0] * 1000)                                                                               
+        // , (LoopWXQuaternion[1] * 1000)                                                                               
+        // , (LoopWXQuaternion[2] * 1000)                                                                               
+        // , (LoopWXQuaternion[3] * 1000)                                                                               
+        // ,   (updateQuaternion[0] * 1000)                                                                             
+        // ,   (updateQuaternion[1] * 1000)                                                                             
+        // ,   (updateQuaternion[2] * 1000)                                                                             
+        // ,   (updateQuaternion[3] * 1000)                                                                             
         , PID_Pitch_xw_diff                                                                                          \
         , PID_Roll_xw_diff                                                                                           \
         , PID_Yaw_xw_diff                                                                                            \
+        , PID_Pitch_y                                                                                                \
+        , PID_Roll_y                                                                                                 \
+        , PID_Yaw_y                                                                                                  \
+        , Yaw_PID_k[0] * 100                                                                                         \
+        , Yaw_PID_k[1] * 100                                                                                         \
+        , Yaw_PID_k[2] * 100                                                                                         \
         , 2 * (int16_t)(((float)atan((float)MPUoutputQuaternion[0] / (float)MPUoutputQuaternion[1]) * 180) / M_PI)   \
         , 2 * (int16_t)(((float)acos((float)MPUoutputQuaternion[0] / (float)1073741824) * 180) / M_PI)               \
-        , SBUS_Channels[3]                                                                                           \
-        , Debug_diff);                                                                                               \
+        , angle);                                                                                               \
 	      uint8_t x = 0;
 	      while (msg[x] != NULL)
 	      {
@@ -120,8 +131,24 @@ void loop()
       break;
     case 4:
       MPU6050_readQuaternionBytes();
+      HAL_NVIC_EnableIRQ(EXTI0_IRQn);
+      break;
+    case 5:
       MPU6050_ConvertToQuaternions();
       HAL_NVIC_EnableIRQ(EXTI0_IRQn);
+      Update_PID();
+      if (SBUS_Channels[2] > -990)
+      {
+        TIM3->CCR1 = (uint16_t)(slowPPM1_MinTime + 1000 - ((slowPPM1_MaxTime - slowPPM1_MinTime) / 2) - PID_Yaw_y);
+      }
+      else
+      {
+        TIM3->CCR1 = slowPPM1_MinTime;
+      }
+      break;
+    case 6:
+      HAL_GPIO_TogglePin(ONBOARD_LED_1_GPIO_Port, ONBOARD_LED_1_Pin);   //debug Pin
+      if (SBUS_Channels[4] >= 999) getPIDValues();
       break;
     case 9:
       Step = 255;
@@ -172,13 +199,6 @@ void loop()
       // }
       // CDC_Transmit_FS((unsigned char*)msgTransmit, sizeof(msgTransmit));
     //}
-
-
-    if (SBUS_Channels[4] < 100)
-    {
-      //MPU6050_readDMP_Quaterions();
-    }
-
   
   //ADC_Select_Channel_11();
 	//adcValuesArray[0] = (uint16_t)ADC1->DR;

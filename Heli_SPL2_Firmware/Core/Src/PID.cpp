@@ -25,17 +25,15 @@ float LoopXQuaternion[4];
 float LoopWXQuaternion[4];
 float updateQuaternion[4];
 
-float Pitch_PID_k[3] = {1, 1, 1};
-float Roll_PID_k[3]  = {1, 1, 1};
-float Yaw_PID_k[3]   = {1, 1, 1};
+float Pitch_PID_k[3] = {0, 0, 0};
+float Roll_PID_k[3]  = {0, 0, 0};
+float Yaw_PID_k[3]   = {0, 0, 0};
 float Pitch_I_Sum;
 float Roll_I_Sum;
 float Yaw_I_Sum;
 float Pitch_D_old;
 float Roll_D_old;
 float Yaw_D_old;
-
-
 
 void getWXQuaternion()
 {
@@ -79,17 +77,89 @@ void Update_FrameOriginQuaternion()
 
 void Update_PID()
 {
-  Pitch_I_Sum += PID_Pitch_xw_diff;
-  Roll_I_Sum  += PID_Roll_xw_diff ;
-  Yaw_I_Sum   += PID_Yaw_xw_diff  ;
+  Pitch_I_Sum += (PID_Pitch_xw_diff * Pitch_PID_k[1]);
+  Roll_I_Sum  += (PID_Roll_xw_diff  * Roll_PID_k[1] );
+  Yaw_I_Sum   += (PID_Yaw_xw_diff   * Yaw_PID_k[1]  );
 
-  PID_Pitch_y = (PID_Pitch_xw_diff * Pitch_PID_k[0]) + (Pitch_I_Sum * Pitch_PID_k[1]) + ((Pitch_D_old - PID_Pitch_xw_diff) * Pitch_PID_k[2]);
-  PID_Roll_y  = (PID_Roll_xw_diff  * Roll_PID_k[0] ) + (Roll_I_Sum  * Roll_PID_k[1] ) + ((Roll_D_old  - PID_Roll_xw_diff ) * Roll_PID_k[2] );
-  PID_Yaw_y   = (PID_Yaw_xw_diff   * Yaw_PID_k[0]  ) + (Yaw_I_Sum   * Yaw_PID_k[1]  ) + ((Yaw_D_old   - PID_Yaw_xw_diff  ) * Yaw_PID_k[2]  );
+  if (Pitch_I_Sum > 500 ) Pitch_I_Sum = 500 ;
+  if (Roll_I_Sum  > 500 ) Roll_I_Sum  = 500 ;
+  if (Yaw_I_Sum   > 500 ) Yaw_I_Sum   = 500 ;
+  if (Pitch_I_Sum < -500) Pitch_I_Sum = -500;
+  if (Roll_I_Sum  < -500) Roll_I_Sum  = -500;
+  if (Yaw_I_Sum   < -500) Yaw_I_Sum   = -500;
+  
+
+  PID_Pitch_y = (PID_Pitch_xw_diff * Pitch_PID_k[0] * 10) + Pitch_I_Sum + ((PID_Pitch_xw_diff - Pitch_D_old) * Pitch_PID_k[2] * 100);
+  PID_Roll_y  = (PID_Roll_xw_diff  * Roll_PID_k[0]  * 10) + Roll_I_Sum  + ((PID_Roll_xw_diff  - Roll_D_old ) * Roll_PID_k[2]  * 100);
+  PID_Yaw_y   = (PID_Yaw_xw_diff   * Yaw_PID_k[0]   * 10) + Yaw_I_Sum   + ((PID_Yaw_xw_diff   - Yaw_D_old  ) * Yaw_PID_k[2]   * 100);
 
   Pitch_D_old = PID_Pitch_xw_diff;
   Roll_D_old  = PID_Roll_xw_diff ;
   Yaw_D_old   = PID_Yaw_xw_diff  ;
+
+  if (PID_Pitch_y > 500 ) PID_Pitch_y = 500 ;
+  if (PID_Roll_y  > 500 ) PID_Roll_y  = 500 ;
+  if (PID_Yaw_y   > 500 ) PID_Yaw_y   = 500 ;
+  if (PID_Pitch_y < -500) PID_Pitch_y = -500;
+  if (PID_Roll_y  < -500) PID_Roll_y  = -500;
+  if (PID_Yaw_y   < -500) PID_Yaw_y   = -500;
+}
+
+void getPIDValues()
+{
+  switch (SBUS_Channels[5])
+  {
+  case -999:   //Pitch
+    switch (SBUS_Channels[6])
+    {
+    case 999:   //P
+      Pitch_PID_k[0] = 0.5 + ((float)SBUS_Channels[7] / 2000);
+      break;
+    default:     //I
+      Pitch_PID_k[1] = 0.5 + ((float)SBUS_Channels[7] / 2000);
+      break;
+    case -999:  //D
+      Pitch_PID_k[2] = 0.5 + ((float)SBUS_Channels[7] / 2000);
+      break;
+  }
+    break;
+  default:     //Roll
+    switch (SBUS_Channels[6])
+    {
+    case 999:   //P
+      Roll_PID_k[0] = 0.5 + ((float)SBUS_Channels[7] / 2000);
+      break;
+    default:     //I
+      Roll_PID_k[1] = 0.5 + ((float)SBUS_Channels[7] / 2000);
+      break;
+    case -999:  //D
+      Roll_PID_k[2] = 0.5 + ((float)SBUS_Channels[7] / 2000);
+      break;
+  }
+    break;
+  case 999:  //Yaw
+    switch (SBUS_Channels[6])
+    {
+    case 999:   //P
+      Yaw_PID_k[0] = 0.5 + ((float)SBUS_Channels[7] / 2000);
+      break;
+    default:     //I
+      Yaw_PID_k[1] = 0.5 + ((float)SBUS_Channels[7] / 2000);
+      break;
+    case -999:  //D
+      Yaw_PID_k[2] = 0.5 + ((float)SBUS_Channels[7] / 2000);
+      break;
+    }
+    break;
+  }
+}
+
+void MPU6050_GetOriginQuaternion()
+{
+  OriginQuaternion[0] = MPUoutputQuaternion[0];
+  OriginQuaternion[1] = MPUoutputQuaternion[1];
+  OriginQuaternion[2] = MPUoutputQuaternion[2];
+  OriginQuaternion[3] = MPUoutputQuaternion[3];
 }
 
 /**
@@ -153,12 +223,4 @@ float *QuaternionNormalize(float *q1)
   qn[2] = q1[2] / vectorlength;
   qn[3] = q1[3] / vectorlength;
   return qn;
-}
-
-void MPU6050_GetOriginQuaternion()
-{
-  OriginQuaternion[0] = MPUoutputQuaternion[0];
-  OriginQuaternion[1] = MPUoutputQuaternion[1];
-  OriginQuaternion[2] = MPUoutputQuaternion[2];
-  OriginQuaternion[3] = MPUoutputQuaternion[3];
 }

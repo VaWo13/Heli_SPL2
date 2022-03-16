@@ -145,6 +145,23 @@ void MPU6050_readQuaternionBytes()
       HAL_GPIO_TogglePin(ONBOARD_WRITE_2_GPIO_Port, ONBOARD_WRITE_2_Pin);   //debug Pin
       readBytes(MPU6050_Adresse, MPU6050_RA_FIFO_COUNTH, 2, MPU6050_RX_buf);  //get FIFO count
       FIFOCounter = (((uint16_t)MPU6050_RX_buf[0]) << 8) | MPU6050_RX_buf[1];
+      for (size_t i = 0; i < 1; i++)
+      {
+        unsigned char msg[300];
+        sprintf((char*)msg," %hd \r\n", FIFOCounter);
+        uint8_t x = 0;
+        while (msg[x] != NULL)
+        {
+        	x++;
+        }
+        unsigned char msgTransmit[x];
+        for (size_t i = 0; i < x; i++)
+        {
+        	msgTransmit[i] = msg[i];
+        }
+        CDC_Transmit_FS((unsigned char*)msgTransmit, sizeof(msgTransmit));
+      }
+
     }
 }
 

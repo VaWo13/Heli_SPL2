@@ -35,7 +35,7 @@ extern float Yaw_D_old;
 void getWXQuaternion();
 void Update_FrameOriginQuaternion();
 void Update_PID();
-
+void getPIDValues();
 
 extern float *QuaternionProduct(float *q1, float *q2);
 extern float *QuaternionInverse(float *q1);
