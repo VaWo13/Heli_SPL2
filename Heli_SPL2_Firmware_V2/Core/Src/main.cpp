@@ -18,10 +18,15 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+
 #include "usb_device.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "realMain.h"
+#include "MPU6050.h"
+#include "motorControl.h"
+#include "SBUS.h"
 
 /* USER CODE END Includes */
 
@@ -56,7 +61,7 @@ TIM_HandleTypeDef htim11;
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_ADC1_Init(void);
-static void MX_I2C1_Init(void);
+void MX_I2C1_Init(void);
 static void MX_TIM3_Init(void);
 static void MX_TIM4_Init(void);
 static void MX_TIM11_Init(void);
@@ -104,13 +109,23 @@ int main(void)
   MX_TIM11_Init();
   MX_USB_DEVICE_Init();
   /* USER CODE BEGIN 2 */
-
+  HAL_TIM_Base_Start(&htim11);    //start TIM11
+  MPU6050_init();
+  PPM_init();
+  while (SBUS_CorruptedPackage == true)     //only continue if the heli is connected to the remote
+  {
+    if (SBUSNewPackage == true) SBUS_postProcessing();
+  }
+  ESCCalibration();
+  MPU6050_calibration();
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+    HAL_GPIO_TogglePin(ONBOARD_LED_1_GPIO_Port, ONBOARD_LED_1_Pin);   //NOTDONE debug
+    loop();
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -215,7 +230,7 @@ static void MX_ADC1_Init(void)
   * @param None
   * @retval None
   */
-static void MX_I2C1_Init(void)
+void MX_I2C1_Init(void)
 {
 
   /* USER CODE BEGIN I2C1_Init 0 */
@@ -265,7 +280,7 @@ static void MX_TIM3_Init(void)
   htim3.Instance = TIM3;
   htim3.Init.Prescaler = 16 - 1;
   htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim3.Init.Period = 2500 - 1;
+  htim3.Init.Period = 20000 - 1;
   htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim3.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_PWM_Init(&htim3) != HAL_OK)
@@ -314,7 +329,7 @@ static void MX_TIM4_Init(void)
   htim4.Instance = TIM4;
   htim4.Init.Prescaler = 16 - 1;
   htim4.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim4.Init.Period = 20000;
+  htim4.Init.Period = 2500 -1;
   htim4.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim4.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_PWM_Init(&htim4) != HAL_OK)
@@ -436,7 +451,21 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-
+/**
+ * @brief This method gets called when the SBUS pin detects a rising edge, indicating the beginning of a SBUS package
+ * 
+ * @param GPIO_Pin SBUS pin
+ * 
+ * --Custom Method!
+ */
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+  if (TIM11->CNT - PinInterruptLastTime > SBUS_interruptDeactivationTime)
+  {
+    SBUS_RecieveBits();
+    PinInterruptLastTime = TIM11->CNT;
+  }
+}
 /* USER CODE END 4 */
 
 /**

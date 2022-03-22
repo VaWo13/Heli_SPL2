@@ -1,0 +1,285 @@
+cmath:184:3:constexpr float std::cos(float)	16	static
+cmath:425:3:constexpr float std::sin(float)	16	static
+cmath:463:3:constexpr float std::sqrt(float)	16	static
+MPU6050.cpp:34:6:void MPU6050_resetFIFO()	8	static
+MPU6050.cpp:44:6:void MPU6050_WaitForQuaternionSet()	8	static
+MPU6050.cpp:60:6:void MPU6050_ConvertToQuaternions()	8	static
+MPU6050.cpp:77:6:void MPU6050_GetOriginQuaternion()	4	static
+MPU6050.cpp:91:6:void update_FrameOriginQuaternion()	24	static
+MPU6050.cpp:122:6:void MPU6050_init()	8	static
+MPU6050.cpp:158:6:void MPU6050_calibration()	392	dynamic
+MPU6050.cpp:240:8:float* QuaternionProduct(float*, float*)	24	static
+MPU6050.cpp:258:8:float* QuaternionInverse(float*)	16	static
+MPU6050.cpp:278:9:float* QuaternionSLERP(float*, float*)	16	static
+MPU6050.cpp:291:8:float* QuaternionNormalize(float*)	32	static
+MPU6050.cpp:575:1:MPU6050::MPU6050()	16	static
+MPU6050.cpp:585:1:MPU6050::MPU6050(uint8_t)	16	static
+MPU6050.cpp:596:6:void MPU6050::initialize()	16	static
+MPU6050.cpp:607:6:bool MPU6050::testConnection()	16	static
+MPU6050.cpp:619:9:uint8_t MPU6050::getAuxVDDIOLevel()	16	static
+MPU6050.cpp:629:6:void MPU6050::setAuxVDDIOLevel(uint8_t)	16	static
+MPU6050.cpp:656:9:uint8_t MPU6050::getRate()	16	static
+MPU6050.cpp:665:6:void MPU6050::setRate(uint8_t)	16	static
+MPU6050.cpp:698:9:uint8_t MPU6050::getExternalFrameSync()	24	static
+MPU6050.cpp:707:6:void MPU6050::setExternalFrameSync(uint8_t)	24	static
+MPU6050.cpp:738:9:uint8_t MPU6050::getDLPFMode()	24	static
+MPU6050.cpp:750:6:void MPU6050::setDLPFMode(uint8_t)	24	static
+MPU6050.cpp:773:9:uint8_t MPU6050::getFullScaleGyroRange()	24	static
+MPU6050.cpp:785:6:void MPU6050::setFullScaleGyroRange(uint8_t)	24	static
+MPU6050.cpp:795:9:uint8_t MPU6050::getAccelXSelfTestFactoryTrim()	16	static
+MPU6050.cpp:805:9:uint8_t MPU6050::getAccelYSelfTestFactoryTrim()	16	static
+MPU6050.cpp:815:9:uint8_t MPU6050::getAccelZSelfTestFactoryTrim()	16	static
+MPU6050.cpp:824:9:uint8_t MPU6050::getGyroXSelfTestFactoryTrim()	16	static
+MPU6050.cpp:833:9:uint8_t MPU6050::getGyroYSelfTestFactoryTrim()	16	static
+MPU6050.cpp:842:9:uint8_t MPU6050::getGyroZSelfTestFactoryTrim()	16	static
+MPU6050.cpp:853:6:bool MPU6050::getAccelXSelfTest()	16	static
+MPU6050.cpp:861:6:void MPU6050::setAccelXSelfTest(bool)	16	static
+MPU6050.cpp:868:6:bool MPU6050::getAccelYSelfTest()	16	static
+MPU6050.cpp:876:6:void MPU6050::setAccelYSelfTest(bool)	16	static
+MPU6050.cpp:883:6:bool MPU6050::getAccelZSelfTest()	16	static
+MPU6050.cpp:891:6:void MPU6050::setAccelZSelfTest(bool)	16	static
+MPU6050.cpp:911:9:uint8_t MPU6050::getFullScaleAccelRange()	24	static
+MPU6050.cpp:919:6:void MPU6050::setFullScaleAccelRange(uint8_t)	24	static
+MPU6050.cpp:957:9:uint8_t MPU6050::getDHPFMode()	24	static
+MPU6050.cpp:967:6:void MPU6050::setDHPFMode(uint8_t)	24	static
+MPU6050.cpp:988:9:uint8_t MPU6050::getFreefallDetectionThreshold()	16	static
+MPU6050.cpp:997:6:void MPU6050::setFreefallDetectionThreshold(uint8_t)	16	static
+MPU6050.cpp:1020:9:uint8_t MPU6050::getFreefallDetectionDuration()	16	static
+MPU6050.cpp:1029:6:void MPU6050::setFreefallDetectionDuration(uint8_t)	16	static
+MPU6050.cpp:1054:9:uint8_t MPU6050::getMotionDetectionThreshold()	16	static
+MPU6050.cpp:1063:6:void MPU6050::setMotionDetectionThreshold(uint8_t)	16	static
+MPU6050.cpp:1084:9:uint8_t MPU6050::getMotionDetectionDuration()	16	static
+MPU6050.cpp:1093:6:void MPU6050::setMotionDetectionDuration(uint8_t)	16	static
+MPU6050.cpp:1124:9:uint8_t MPU6050::getZeroMotionDetectionThreshold()	16	static
+MPU6050.cpp:1133:6:void MPU6050::setZeroMotionDetectionThreshold(uint8_t)	16	static
+MPU6050.cpp:1155:9:uint8_t MPU6050::getZeroMotionDetectionDuration()	16	static
+MPU6050.cpp:1164:6:void MPU6050::setZeroMotionDetectionDuration(uint8_t)	16	static
+MPU6050.cpp:1176:6:bool MPU6050::getTempFIFOEnabled()	16	static
+MPU6050.cpp:1185:6:void MPU6050::setTempFIFOEnabled(bool)	16	static
+MPU6050.cpp:1194:6:bool MPU6050::getXGyroFIFOEnabled()	16	static
+MPU6050.cpp:1203:6:void MPU6050::setXGyroFIFOEnabled(bool)	16	static
+MPU6050.cpp:1212:6:bool MPU6050::getYGyroFIFOEnabled()	16	static
+MPU6050.cpp:1221:6:void MPU6050::setYGyroFIFOEnabled(bool)	16	static
+MPU6050.cpp:1230:6:bool MPU6050::getZGyroFIFOEnabled()	16	static
+MPU6050.cpp:1239:6:void MPU6050::setZGyroFIFOEnabled(bool)	16	static
+MPU6050.cpp:1249:6:bool MPU6050::getAccelFIFOEnabled()	16	static
+MPU6050.cpp:1258:6:void MPU6050::setAccelFIFOEnabled(bool)	16	static
+MPU6050.cpp:1267:6:bool MPU6050::getSlave2FIFOEnabled()	16	static
+MPU6050.cpp:1276:6:void MPU6050::setSlave2FIFOEnabled(bool)	16	static
+MPU6050.cpp:1285:6:bool MPU6050::getSlave1FIFOEnabled()	16	static
+MPU6050.cpp:1294:6:void MPU6050::setSlave1FIFOEnabled(bool)	16	static
+MPU6050.cpp:1303:6:bool MPU6050::getSlave0FIFOEnabled()	16	static
+MPU6050.cpp:1312:6:void MPU6050::setSlave0FIFOEnabled(bool)	16	static
+MPU6050.cpp:1333:6:bool MPU6050::getMultiMasterEnabled()	16	static
+MPU6050.cpp:1342:6:void MPU6050::setMultiMasterEnabled(bool)	16	static
+MPU6050.cpp:1356:6:bool MPU6050::getWaitForExternalSensorEnabled()	16	static
+MPU6050.cpp:1365:6:void MPU6050::setWaitForExternalSensorEnabled(bool)	16	static
+MPU6050.cpp:1374:6:bool MPU6050::getSlave3FIFOEnabled()	16	static
+MPU6050.cpp:1383:6:void MPU6050::setSlave3FIFOEnabled(bool)	16	static
+MPU6050.cpp:1396:6:bool MPU6050::getSlaveReadWriteTransitionEnabled()	16	static
+MPU6050.cpp:1405:6:void MPU6050::setSlaveReadWriteTransitionEnabled(bool)	16	static
+MPU6050.cpp:1437:9:uint8_t MPU6050::getMasterClockSpeed()	24	static
+MPU6050.cpp:1445:6:void MPU6050::setMasterClockSpeed(uint8_t)	24	static
+MPU6050.cpp:1492:9:uint8_t MPU6050::getSlaveAddress(uint8_t)	16	static
+MPU6050.cpp:1503:6:void MPU6050::setSlaveAddress(uint8_t, uint8_t)	16	static
+MPU6050.cpp:1518:9:uint8_t MPU6050::getSlaveRegister(uint8_t)	16	static
+MPU6050.cpp:1529:6:void MPU6050::setSlaveRegister(uint8_t, uint8_t)	16	static
+MPU6050.cpp:1540:6:bool MPU6050::getSlaveEnabled(uint8_t)	16	static
+MPU6050.cpp:1551:6:void MPU6050::setSlaveEnabled(uint8_t, bool)	16	static
+MPU6050.cpp:1566:6:bool MPU6050::getSlaveWordByteSwap(uint8_t)	16	static
+MPU6050.cpp:1577:6:void MPU6050::setSlaveWordByteSwap(uint8_t, bool)	16	static
+MPU6050.cpp:1591:6:bool MPU6050::getSlaveWriteMode(uint8_t)	16	static
+MPU6050.cpp:1602:6:void MPU6050::setSlaveWriteMode(uint8_t, bool)	16	static
+MPU6050.cpp:1617:6:bool MPU6050::getSlaveWordGroupOffset(uint8_t)	16	static
+MPU6050.cpp:1628:6:void MPU6050::setSlaveWordGroupOffset(uint8_t, bool)	16	static
+MPU6050.cpp:1639:9:uint8_t MPU6050::getSlaveDataLength(uint8_t)	24	static
+MPU6050.cpp:1650:6:void MPU6050::setSlaveDataLength(uint8_t, uint8_t)	24	static
+MPU6050.cpp:1666:9:uint8_t MPU6050::getSlave4Address()	16	static
+MPU6050.cpp:1675:6:void MPU6050::setSlave4Address(uint8_t)	16	static
+MPU6050.cpp:1685:9:uint8_t MPU6050::getSlave4Register()	16	static
+MPU6050.cpp:1694:6:void MPU6050::setSlave4Register(uint8_t)	16	static
+MPU6050.cpp:1703:6:void MPU6050::setSlave4OutputByte(uint8_t)	16	static
+MPU6050.cpp:1712:6:bool MPU6050::getSlave4Enabled()	16	static
+MPU6050.cpp:1721:6:void MPU6050::setSlave4Enabled(bool)	16	static
+MPU6050.cpp:1733:6:bool MPU6050::getSlave4InterruptEnabled()	16	static
+MPU6050.cpp:1742:6:void MPU6050::setSlave4InterruptEnabled(bool)	16	static
+MPU6050.cpp:1754:6:bool MPU6050::getSlave4WriteMode()	16	static
+MPU6050.cpp:1763:6:void MPU6050::setSlave4WriteMode(bool)	16	static
+MPU6050.cpp:1781:9:uint8_t MPU6050::getSlave4MasterDelay()	24	static
+MPU6050.cpp:1790:6:void MPU6050::setSlave4MasterDelay(uint8_t)	24	static
+MPU6050.cpp:1799:9:uint8_t MPU6050::getSlate4InputByte()	16	static
+MPU6050.cpp:1815:6:bool MPU6050::getPassthroughStatus()	16	static
+MPU6050.cpp:1827:6:bool MPU6050::getSlave4IsDone()	16	static
+MPU6050.cpp:1838:6:bool MPU6050::getLostArbitration()	16	static
+MPU6050.cpp:1849:6:bool MPU6050::getSlave4Nack()	16	static
+MPU6050.cpp:1860:6:bool MPU6050::getSlave3Nack()	16	static
+MPU6050.cpp:1871:6:bool MPU6050::getSlave2Nack()	16	static
+MPU6050.cpp:1882:6:bool MPU6050::getSlave1Nack()	16	static
+MPU6050.cpp:1893:6:bool MPU6050::getSlave0Nack()	16	static
+MPU6050.cpp:1906:6:bool MPU6050::getInterruptMode()	16	static
+MPU6050.cpp:1916:6:void MPU6050::setInterruptMode(bool)	16	static
+MPU6050.cpp:1925:6:bool MPU6050::getInterruptDrive()	16	static
+MPU6050.cpp:1935:6:void MPU6050::setInterruptDrive(bool)	16	static
+MPU6050.cpp:1944:6:bool MPU6050::getInterruptLatch()	16	static
+MPU6050.cpp:1954:6:void MPU6050::setInterruptLatch(bool)	16	static
+MPU6050.cpp:1963:6:bool MPU6050::getInterruptLatchClear()	16	static
+MPU6050.cpp:1973:6:void MPU6050::setInterruptLatchClear(bool)	16	static
+MPU6050.cpp:1982:6:bool MPU6050::getFSyncInterruptLevel()	16	static
+MPU6050.cpp:1992:6:void MPU6050::setFSyncInterruptLevel(bool)	16	static
+MPU6050.cpp:2001:6:bool MPU6050::getFSyncInterruptEnabled()	16	static
+MPU6050.cpp:2011:6:void MPU6050::setFSyncInterruptEnabled(bool)	16	static
+MPU6050.cpp:2025:6:bool MPU6050::getI2CBypassEnabled()	16	static
+MPU6050.cpp:2040:6:void MPU6050::setI2CBypassEnabled(bool)	16	static
+MPU6050.cpp:2052:6:bool MPU6050::getClockOutputEnabled()	16	static
+MPU6050.cpp:2065:6:void MPU6050::setClockOutputEnabled(bool)	16	static
+MPU6050.cpp:2078:9:uint8_t MPU6050::getIntEnabled()	16	static
+MPU6050.cpp:2090:6:void MPU6050::setIntEnabled(uint8_t)	16	static
+MPU6050.cpp:2099:6:bool MPU6050::getIntFreefallEnabled()	16	static
+MPU6050.cpp:2109:6:void MPU6050::setIntFreefallEnabled(bool)	16	static
+MPU6050.cpp:2118:6:bool MPU6050::getIntMotionEnabled()	16	static
+MPU6050.cpp:2128:6:void MPU6050::setIntMotionEnabled(bool)	16	static
+MPU6050.cpp:2137:6:bool MPU6050::getIntZeroMotionEnabled()	16	static
+MPU6050.cpp:2147:6:void MPU6050::setIntZeroMotionEnabled(bool)	16	static
+MPU6050.cpp:2156:6:bool MPU6050::getIntFIFOBufferOverflowEnabled()	16	static
+MPU6050.cpp:2166:6:void MPU6050::setIntFIFOBufferOverflowEnabled(bool)	16	static
+MPU6050.cpp:2176:6:bool MPU6050::getIntI2CMasterEnabled()	16	static
+MPU6050.cpp:2186:6:void MPU6050::setIntI2CMasterEnabled(bool)	16	static
+MPU6050.cpp:2196:6:bool MPU6050::getIntDataReadyEnabled()	16	static
+MPU6050.cpp:2206:6:void MPU6050::setIntDataReadyEnabled(bool)	16	static
+MPU6050.cpp:2219:9:uint8_t MPU6050::getIntStatus()	16	static
+MPU6050.cpp:2230:6:bool MPU6050::getIntFreefallStatus()	16	static
+MPU6050.cpp:2241:6:bool MPU6050::getIntMotionStatus()	16	static
+MPU6050.cpp:2252:6:bool MPU6050::getIntZeroMotionStatus()	16	static
+MPU6050.cpp:2263:6:bool MPU6050::getIntFIFOBufferOverflowStatus()	16	static
+MPU6050.cpp:2275:6:bool MPU6050::getIntI2CMasterStatus()	16	static
+MPU6050.cpp:2286:6:bool MPU6050::getIntDataReadyStatus()	16	static
+MPU6050.cpp:2309:6:void MPU6050::getMotion9(int16_t*, int16_t*, int16_t*, int16_t*, int16_t*, int16_t*, int16_t*, int16_t*, int16_t*)	40	static
+MPU6050.cpp:2325:6:void MPU6050::getMotion6(int16_t*, int16_t*, int16_t*, int16_t*, int16_t*, int16_t*)	24	static
+MPU6050.cpp:2370:6:void MPU6050::getAcceleration(int16_t*, int16_t*, int16_t*)	24	static
+MPU6050.cpp:2381:9:int16_t MPU6050::getAccelerationX()	16	static
+MPU6050.cpp:2390:9:int16_t MPU6050::getAccelerationY()	16	static
+MPU6050.cpp:2399:9:int16_t MPU6050::getAccelerationZ()	16	static
+MPU6050.cpp:2410:9:int16_t MPU6050::getTemperature()	16	static
+MPU6050.cpp:2449:6:void MPU6050::getRotation(int16_t*, int16_t*, int16_t*)	24	static
+MPU6050.cpp:2460:9:int16_t MPU6050::getRotationX()	16	static
+MPU6050.cpp:2469:9:int16_t MPU6050::getRotationY()	16	static
+MPU6050.cpp:2478:9:int16_t MPU6050::getRotationZ()	16	static
+MPU6050.cpp:2559:9:uint8_t MPU6050::getExternalSensorByte(int)	16	static
+MPU6050.cpp:2568:10:uint16_t MPU6050::getExternalSensorWord(int)	16	static
+MPU6050.cpp:2577:10:uint32_t MPU6050::getExternalSensorDWord(int)	16	static
+MPU6050.cpp:2588:9:uint8_t MPU6050::getMotionStatus()	16	static
+MPU6050.cpp:2597:6:bool MPU6050::getXNegMotionDetected()	16	static
+MPU6050.cpp:2606:6:bool MPU6050::getXPosMotionDetected()	16	static
+MPU6050.cpp:2615:6:bool MPU6050::getYNegMotionDetected()	16	static
+MPU6050.cpp:2624:6:bool MPU6050::getYPosMotionDetected()	16	static
+MPU6050.cpp:2633:6:bool MPU6050::getZNegMotionDetected()	16	static
+MPU6050.cpp:2642:6:bool MPU6050::getZPosMotionDetected()	16	static
+MPU6050.cpp:2651:6:bool MPU6050::getZeroMotionDetected()	16	static
+MPU6050.cpp:2666:6:void MPU6050::setSlaveOutputByte(uint8_t, uint8_t)	16	static
+MPU6050.cpp:2681:6:bool MPU6050::getExternalShadowDelayEnabled()	16	static
+MPU6050.cpp:2691:6:void MPU6050::setExternalShadowDelayEnabled(bool)	16	static
+MPU6050.cpp:2712:6:bool MPU6050::getSlaveDelayEnabled(uint8_t)	16	static
+MPU6050.cpp:2724:6:void MPU6050::setSlaveDelayEnabled(uint8_t, bool)	16	static
+MPU6050.cpp:2736:6:void MPU6050::resetGyroscopePath()	16	static
+MPU6050.cpp:2745:6:void MPU6050::resetAccelerometerPath()	16	static
+MPU6050.cpp:2754:6:void MPU6050::resetTemperaturePath()	16	static
+MPU6050.cpp:2774:9:uint8_t MPU6050::getAccelerometerPowerOnDelay()	24	static
+MPU6050.cpp:2784:6:void MPU6050::setAccelerometerPowerOnDelay(uint8_t)	24	static
+MPU6050.cpp:2813:9:uint8_t MPU6050::getFreefallDetectionCounterDecrement()	24	static
+MPU6050.cpp:2823:6:void MPU6050::setFreefallDetectionCounterDecrement(uint8_t)	24	static
+MPU6050.cpp:2849:9:uint8_t MPU6050::getMotionDetectionCounterDecrement()	24	static
+MPU6050.cpp:2859:6:void MPU6050::setMotionDetectionCounterDecrement(uint8_t)	24	static
+MPU6050.cpp:2873:6:bool MPU6050::getFIFOEnabled()	16	static
+MPU6050.cpp:2883:6:void MPU6050::setFIFOEnabled(bool)	16	static
+MPU6050.cpp:2897:6:bool MPU6050::getI2CMasterModeEnabled()	16	static
+MPU6050.cpp:2907:6:void MPU6050::setI2CMasterModeEnabled(bool)	16	static
+MPU6050.cpp:2914:6:void MPU6050::switchSPIEnabled(bool)	16	static
+MPU6050.cpp:2923:6:void MPU6050::resetFIFO()	16	static
+MPU6050.cpp:2932:6:void MPU6050::resetI2CMaster()	16	static
+MPU6050.cpp:2947:6:void MPU6050::resetSensors()	16	static
+MPU6050.cpp:2958:6:void MPU6050::reset()	16	static
+MPU6050.cpp:2972:6:bool MPU6050::getSleepEnabled()	16	static
+MPU6050.cpp:2982:6:void MPU6050::setSleepEnabled(bool)	16	static
+MPU6050.cpp:2993:6:bool MPU6050::getWakeCycleEnabled()	16	static
+MPU6050.cpp:3003:6:void MPU6050::setWakeCycleEnabled(bool)	16	static
+MPU6050.cpp:3017:6:bool MPU6050::getTempSensorEnabled()	16	static
+MPU6050.cpp:3031:6:void MPU6050::setTempSensorEnabled(bool)	16	static
+MPU6050.cpp:3041:9:uint8_t MPU6050::getClockSource()	24	static
+MPU6050.cpp:3075:6:void MPU6050::setClockSource(uint8_t)	24	static
+MPU6050.cpp:3104:9:uint8_t MPU6050::getWakeFrequency()	24	static
+MPU6050.cpp:3112:6:void MPU6050::setWakeFrequency(uint8_t)	24	static
+MPU6050.cpp:3122:6:bool MPU6050::getStandbyXAccelEnabled()	16	static
+MPU6050.cpp:3132:6:void MPU6050::setStandbyXAccelEnabled(bool)	16	static
+MPU6050.cpp:3141:6:bool MPU6050::getStandbyYAccelEnabled()	16	static
+MPU6050.cpp:3151:6:void MPU6050::setStandbyYAccelEnabled(bool)	16	static
+MPU6050.cpp:3160:6:bool MPU6050::getStandbyZAccelEnabled()	16	static
+MPU6050.cpp:3170:6:void MPU6050::setStandbyZAccelEnabled(bool)	16	static
+MPU6050.cpp:3179:6:bool MPU6050::getStandbyXGyroEnabled()	16	static
+MPU6050.cpp:3189:6:void MPU6050::setStandbyXGyroEnabled(bool)	16	static
+MPU6050.cpp:3198:6:bool MPU6050::getStandbyYGyroEnabled()	16	static
+MPU6050.cpp:3208:6:void MPU6050::setStandbyYGyroEnabled(bool)	16	static
+MPU6050.cpp:3217:6:bool MPU6050::getStandbyZGyroEnabled()	16	static
+MPU6050.cpp:3227:6:void MPU6050::setStandbyZGyroEnabled(bool)	16	static
+MPU6050.cpp:3240:10:uint16_t MPU6050::getFIFOCount()	16	static
+MPU6050.cpp:3272:9:uint8_t MPU6050::getFIFOByte()	16	static
+MPU6050.cpp:3276:6:void MPU6050::getFIFOBytes(uint8_t*, uint8_t)	24	static
+MPU6050.cpp:3287:6:void MPU6050::setFIFOByte(uint8_t)	16	static
+MPU6050.cpp:3300:9:uint8_t MPU6050::getDeviceID()	24	static
+MPU6050.cpp:3313:6:void MPU6050::setDeviceID(uint8_t)	24	static
+MPU6050.cpp:3321:9:uint8_t MPU6050::getOTPBankValid()	16	static
+MPU6050.cpp:3325:6:void MPU6050::setOTPBankValid(bool)	16	static
+MPU6050.cpp:3328:8:int8_t MPU6050::getXGyroOffsetTC()	24	static
+MPU6050.cpp:3332:6:void MPU6050::setXGyroOffsetTC(int8_t)	24	static
+MPU6050.cpp:3338:8:int8_t MPU6050::getYGyroOffsetTC()	24	static
+MPU6050.cpp:3342:6:void MPU6050::setYGyroOffsetTC(int8_t)	24	static
+MPU6050.cpp:3348:8:int8_t MPU6050::getZGyroOffsetTC()	24	static
+MPU6050.cpp:3352:6:void MPU6050::setZGyroOffsetTC(int8_t)	24	static
+MPU6050.cpp:3358:8:int8_t MPU6050::getXFineGain()	16	static
+MPU6050.cpp:3362:6:void MPU6050::setXFineGain(int8_t)	16	static
+MPU6050.cpp:3368:8:int8_t MPU6050::getYFineGain()	16	static
+MPU6050.cpp:3372:6:void MPU6050::setYFineGain(int8_t)	16	static
+MPU6050.cpp:3378:8:int8_t MPU6050::getZFineGain()	16	static
+MPU6050.cpp:3382:6:void MPU6050::setZFineGain(int8_t)	16	static
+MPU6050.cpp:3388:9:int16_t MPU6050::getXAccelOffset()	16	static
+MPU6050.cpp:3392:6:void MPU6050::setXAccelOffset(int16_t)	16	static
+MPU6050.cpp:3398:9:int16_t MPU6050::getYAccelOffset()	16	static
+MPU6050.cpp:3402:6:void MPU6050::setYAccelOffset(int16_t)	16	static
+MPU6050.cpp:3408:9:int16_t MPU6050::getZAccelOffset()	16	static
+MPU6050.cpp:3412:6:void MPU6050::setZAccelOffset(int16_t)	16	static
+MPU6050.cpp:3418:9:int16_t MPU6050::getXGyroOffset()	16	static
+MPU6050.cpp:3422:6:void MPU6050::setXGyroOffset(int16_t)	16	static
+MPU6050.cpp:3428:9:int16_t MPU6050::getYGyroOffset()	16	static
+MPU6050.cpp:3432:6:void MPU6050::setYGyroOffset(int16_t)	16	static
+MPU6050.cpp:3438:9:int16_t MPU6050::getZGyroOffset()	16	static
+MPU6050.cpp:3442:6:void MPU6050::setZGyroOffset(int16_t)	16	static
+MPU6050.cpp:3448:6:bool MPU6050::getIntPLLReadyEnabled()	16	static
+MPU6050.cpp:3452:6:void MPU6050::setIntPLLReadyEnabled(bool)	16	static
+MPU6050.cpp:3455:6:bool MPU6050::getIntDMPEnabled()	16	static
+MPU6050.cpp:3459:6:void MPU6050::setIntDMPEnabled(bool)	16	static
+MPU6050.cpp:3465:6:bool MPU6050::getDMPInt5Status()	16	static
+MPU6050.cpp:3469:6:bool MPU6050::getDMPInt4Status()	16	static
+MPU6050.cpp:3473:6:bool MPU6050::getDMPInt3Status()	16	static
+MPU6050.cpp:3477:6:bool MPU6050::getDMPInt2Status()	16	static
+MPU6050.cpp:3481:6:bool MPU6050::getDMPInt1Status()	16	static
+MPU6050.cpp:3485:6:bool MPU6050::getDMPInt0Status()	16	static
+MPU6050.cpp:3492:6:bool MPU6050::getIntPLLReadyStatus()	16	static
+MPU6050.cpp:3496:6:bool MPU6050::getIntDMPStatus()	16	static
+MPU6050.cpp:3503:6:bool MPU6050::getDMPEnabled()	16	static
+MPU6050.cpp:3507:6:void MPU6050::setDMPEnabled(bool)	16	static
+MPU6050.cpp:3510:6:void MPU6050::resetDMP()	16	static
+MPU6050.cpp:3516:6:void MPU6050::setMemoryBank(uint8_t, bool, bool)	16	static
+MPU6050.cpp:3525:6:void MPU6050::setMemoryStartAddress(uint8_t)	16	static
+MPU6050.cpp:3531:9:uint8_t MPU6050::readMemoryByte()	16	static
+MPU6050.cpp:3535:6:void MPU6050::writeMemoryByte(uint8_t)	16	static
+MPU6050.cpp:3538:6:void MPU6050::readMemoryBlock(uint8_t*, uint16_t, uint8_t, uint8_t)	32	static
+MPU6050.cpp:3569:6:bool MPU6050::writeMemoryBlock(const uint8_t*, uint16_t, uint8_t, uint8_t, bool, bool)	40	static
+MPU6050.cpp:3645:6:bool MPU6050::writeProgMemoryBlock(const uint8_t*, uint16_t, uint8_t, uint8_t, bool)	40	static
+MPU6050.cpp:3648:6:bool MPU6050::writeDMPConfigurationSet(const uint8_t*, uint16_t, bool)	56	static
+MPU6050.cpp:3724:6:bool MPU6050::writeProgDMPConfigurationSet(const uint8_t*, uint16_t)	24	static
+MPU6050.cpp:3730:9:uint8_t MPU6050::getDMPConfig1()	16	static
+MPU6050.cpp:3734:6:void MPU6050::setDMPConfig1(uint8_t)	16	static
+MPU6050.cpp:3740:9:uint8_t MPU6050::getDMPConfig2()	16	static
+MPU6050.cpp:3744:6:void MPU6050::setDMPConfig2(uint8_t)	16	static
+MPU6050.cpp:3750:9:uint8_t MPU6050::dmpInitialize()	200	static
+MPU6050.cpp:3971:1:void __static_initialization_and_destruction_0(int, int)	16	static
+MPU6050.cpp:3971:1:cpp)	8	static
