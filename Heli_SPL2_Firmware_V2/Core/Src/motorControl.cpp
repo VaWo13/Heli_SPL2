@@ -9,7 +9,10 @@
 uint16_t adcValueChannel11;
 uint16_t adcValueChannel12;
 uint16_t mainMotorAngle;
-int8_t mainMotorAngleOffset;
+int8_t mainMotorAngleOffset = 0;
+float sin_OffsetAngle = sin(((float)mainMotorAngleOffset * 180) / M_PI);
+float cos_OffsetAngle = cos(((float)mainMotorAngleOffset * 180) / M_PI);
+
 
 /**
  * @brief This method updates the main motor speed by first measuring both HALL sensors and determining the motor angle.
@@ -36,13 +39,19 @@ void updateMainMotorSpeed()
   //NOTDONE maybe apply offset rotation without converting to mainMotorAngle and then back but rather use complex numbers
   //NOTDONE disable PITCH,ROLL when throttle is 0
   //mainMotorAngle = motorAngle(adcValueChannel12 - 1250, adcValueChannel11 - 1250);
-  mainMotorAngle = ((atan2((float)adcValueChannel12 - 1250, (float)adcValueChannel11 - 1250) * 180) / M_PI) + 180;       //NOTDONE use define for value fastPPM_CenterTime
-  TIM4->CCR1 = (uint16_t)(fastPPM_MinTime + 500 + ((float)SBUS_Channels[2] / 2) + ((float)sin((mainMotorAngle + mainMotorAngleOffset) * (M_PI / 180)) * (PID_Pitch_y / 10)) + ((float)cos((mainMotorAngle + mainMotorAngleOffset) * (M_PI / 180)) * ((float)PID_Roll_y / 10))); //NOTDONE use define for value, try to simplify
+  TIM4->CCR1 = (uint16_t)(                                                                                                                                                      \
+    fastPPM_CenterTime                                                                                                                                                          \
+  + ((float)SBUS_Channels[2] * PPMmainMotorScaler)                                                                                                                              \
+  + ((((((float)adcValueChannel12 - hall2_center) * hall2_scaler) * cos_OffsetAngle) - ((((float)adcValueChannel11 - hall1_center) * hall1_scaler) * sin_OffsetAngle)) * (PID_Pitch_y * 1))   \
+  + ((((((float)adcValueChannel11 - hall1_center) * hall1_scaler) * cos_OffsetAngle) + ((((float)adcValueChannel12 - hall2_center) * hall2_scaler) * sin_OffsetAngle)) * (PID_Roll_y  * 1))   \
+  );
+  // mainMotorAngle = ((atan2((float)adcValueChannel12 - 1250, (float)adcValueChannel11 - 1250) * 180) / M_PI) + 180;       //NOTDONE use define for value fastPPM_CenterTime
+  // TIM4->CCR1 = (uint16_t)(fastPPM_MinTime + 500 + ((float)SBUS_Channels[2] / 2) + ((float)sin((mainMotorAngle + mainMotorAngleOffset) * (M_PI / 180)) * (PID_Pitch_y / 10)) + ((float)cos((mainMotorAngle + mainMotorAngleOffset) * (M_PI / 180)) * ((float)PID_Roll_y / 10))); //NOTDONE use define for value, try to simplify
 }
 
 /**
  * @brief This method updates the tail motor speed.
- * If the throttle is off the motor is disabled.
+ * If the throttle is off the motor is disabled and PID values get reset.
  * If the throttle is above a given deadzone the motor speed is YAW Y value
  * 
  * --Custom Method!
@@ -56,6 +65,10 @@ void updateTailMotorSpeed()
   else
   {
     TIM3->CCR1 = slowPPM1_MinTime;
+    Pitch_I_Sum = 0;
+    Roll_I_Sum  = 0;
+    Yaw_I_Sum   = 0;
+    reset_WQuaternion();
   }
 }
 

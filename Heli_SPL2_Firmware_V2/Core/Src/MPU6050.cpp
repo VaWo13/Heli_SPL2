@@ -37,6 +37,16 @@ void MPU6050_resetFIFO()
 }
 
 /**
+ * @brief //NOTDONE
+ * 
+ * 
+ */
+void clearFIFO_OF_Flag()
+{
+  readByte(MPU6050_Adresse, MPU6050_RA_INT_STATUS, MPU6050_RX_buf);
+}
+
+/**
  * @brief Waits until a new Quaternion-set is available in the FIFO
  * 
  * --Custom Method!
@@ -45,6 +55,11 @@ void MPU6050_WaitForQuaternionSet()
 {
   readBytes(MPU6050_Adresse, MPU6050_RA_FIFO_COUNTH, 2, MPU6050_RX_buf);  //get FIFO count
   FIFOCounter = (((uint16_t)MPU6050_RX_buf[0]) << 8) | MPU6050_RX_buf[1]; //assemble FIFO count
+  if (FIFOCounter > 200)
+  {
+    MPU6050_resetFIFO();
+  }
+  
   while (FIFOCounter < 42)                                                //wait until there are more than 42 bytes in the FIFO
   {
     readBytes(MPU6050_Adresse, MPU6050_RA_FIFO_COUNTH, 2, MPU6050_RX_buf);  //get FIFO count
@@ -133,18 +148,11 @@ void MPU6050_init()
   mpu.setXAccelOffset(4599);
   mpu.setYAccelOffset(-951);
   mpu.setZAccelOffset(1930);
-  mpu.setDMPEnabled(true);          //enable DMP
 
-  while (mpu.getDMPEnabled() == false)
-  {
-    mpu.dmpInitialize();
-    HAL_Delay(5);
-    mpu.setDMPEnabled(true);          //enable DMP
-  }
+    mpu.setDMPEnabled(true);        //enable DMP
 
-  HAL_Delay(5);
   MPU6050_resetFIFO();              //reset FIFO
-  HAL_Delay(2);
+  clearFIFO_OF_Flag();
   MPU6050_WaitForQuaternionSet();
   MPU6050_ConvertToQuaternions();
   HAL_NVIC_EnableIRQ(EXTI0_IRQn);   //enable SBUS pin interrupt
@@ -163,7 +171,7 @@ void MPU6050_calibration()//NOTDONE comment
   {
     uint16_t counter = 0;
     MPU6050_resetFIFO();              //reset FIFO
-    HAL_Delay(2);
+    clearFIFO_OF_Flag();
     MPU6050_WaitForQuaternionSet();
     MPU6050_ConvertToQuaternions();
     MPU6050_GetOriginQuaternion();
@@ -185,7 +193,7 @@ void MPU6050_calibration()//NOTDONE comment
     )                                                                                                                                     \
     {
       MPU6050_resetFIFO();              //reset FIFO
-      HAL_Delay(2);
+      clearFIFO_OF_Flag();
       MPU6050_WaitForQuaternionSet();
       MPU6050_ConvertToQuaternions();
       get_XW_diffAngles();
@@ -3751,7 +3759,7 @@ uint8_t MPU6050::dmpInitialize() {
     // reset device
     //DEBUG_PRINTLN(F("\n\nResetting MPU6050..."));
     reset();
-    HAL_Delay(30); // wait after reset
+    HAL_Delay(50); // wait after reset
 
     // enable sleep mode and wake cycle
     /*Serial.println(F("Enabling sleep mode..."));
@@ -3820,7 +3828,7 @@ uint8_t MPU6050::dmpInitialize() {
             setClockSource(MPU6050_CLOCK_PLL_ZGYRO);
 
             //DEBUG_PRINTLN(F("Setting DMP and FIFO_OFLOW interrupts enabled..."));
-            setIntEnabled(0x12);
+            //setIntEnabled(0x12);
 
             //DEBUG_PRINTLN(F("Setting sample rate to 200Hz..."));
             setRate(4); // 1khz / (1 + 4) = 200 Hz

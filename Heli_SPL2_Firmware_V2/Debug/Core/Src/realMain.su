@@ -1,3 +1,1 @@
-cmath:87:3:constexpr float std::acos(float)	16	static
-cmath:125:3:constexpr float std::atan(float)	16	static
-realMain.cpp:10:6:void loop()	608	dynamic
+realMain.cpp:10:6:void loop()	632	dynamic

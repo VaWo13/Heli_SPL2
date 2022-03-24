@@ -1,5 +1,6 @@
-cmath:144:3:constexpr float std::atan2(float, float)	16	static
-motorControl.cpp:20:6:void updateMainMotorSpeed()	16	static
-motorControl.cpp:50:6:void updateTailMotorSpeed()	8	static
-motorControl.cpp:67:6:void PPM_init()	8	static
-motorControl.cpp:81:6:void ESCCalibration()	16	static
+motorControl.cpp:23:6:void updateMainMotorSpeed()	32	static
+motorControl.cpp:59:6:void updateTailMotorSpeed()	8	static
+motorControl.cpp:80:6:void PPM_init()	8	static
+motorControl.cpp:94:6:void ESCCalibration()	16	static
+motorControl.cpp:137:1:void __static_initialization_and_destruction_0(int, int)	16	static
+motorControl.cpp:137:1:cpp)	8	static

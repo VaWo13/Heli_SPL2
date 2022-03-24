@@ -41,26 +41,26 @@ void loop()
        for (size_t i = 0; i < 1; i++)
        {
          unsigned char msg[300];
-	       sprintf((char*)msg,"%f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %hd %hd %f %hd \r\n"                      \
-         , PID_Pitch_xw_diff                                                                                        \
-         , PID_Roll_xw_diff                                                                                         \
-         , PID_Yaw_xw_diff                                                                                          \
-         , PID_Pitch_y                                                                                              \
-         , PID_Roll_y                                                                                               \
-         , PID_Yaw_y                                                                                                \
-         , Pitch_PID_k[0] * 100                                                                                     \
-         , Pitch_PID_k[1] * 100                                                                                     \
-         , Pitch_PID_k[2] * 100                                                                                     \
-         , Roll_PID_k[0] * 100                                                                                      \
-         , Roll_PID_k[1] * 100                                                                                      \
-         , Roll_PID_k[2] * 100                                                                                      \
-         , Yaw_PID_k[0] * 100                                                                                       \
-         , Yaw_PID_k[1] * 100                                                                                       \
-         , Yaw_PID_k[2] * 100                                                                                       \
-         , 2 * (int16_t)(((float)atan((float)MPUoutputQuaternion[0] / (float)MPUoutputQuaternion[1]) * 180) / M_PI) \
-         , 2 * (int16_t)(((float)acos((float)MPUoutputQuaternion[0] / (float)1073741824) * 180) / M_PI)             \
-         , (float)SBUS_Channels[5]                                                                                  \
-         , mainMotorAngleOffset);                                                                                  \
+	       sprintf((char*)msg,"%f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %hd \r\n"                                                                                                        \
+         , PID_Pitch_xw_diff                                                                                                                                                                        \
+         , PID_Roll_xw_diff                                                                                                                                                                         \
+         , PID_Yaw_xw_diff                                                                                                                                                                          \
+         , PID_Pitch_y                                                                                                                                                                              \
+         , PID_Roll_y                                                                                                                                                                               \
+         , PID_Yaw_y                                                                                                                                                                                \
+         , Pitch_PID_k[0] * 100                                                                                                                                                                     \
+         , Pitch_PID_k[1] * 100                                                                                                                                                                     \
+         , Pitch_PID_k[2] * 100                                                                                                                                                                     \
+         , Roll_PID_k[0] * 100                                                                                                                                                                      \
+         , Roll_PID_k[1] * 100                                                                                                                                                                      \
+         , Roll_PID_k[2] * 100                                                                                                                                                                      \
+         , Yaw_PID_k[0] * 100                                                                                                                                                                       \
+         , Yaw_PID_k[1] * 100                                                                                                                                                                       \
+         , Yaw_PID_k[2] * 100                                                                                                                                                                       \
+         , ((((((float)adcValueChannel12 - hall2_center) * hall2_scaler) * cos_OffsetAngle) - ((((float)adcValueChannel11 - hall1_center) * hall1_scaler) * sin_OffsetAngle)) * (PID_Pitch_y * 1))  \
+         , ((((((float)adcValueChannel11 - hall1_center) * hall1_scaler) * cos_OffsetAngle) + ((((float)adcValueChannel12 - hall2_center) * hall2_scaler) * sin_OffsetAngle)) * (PID_Roll_y  * 1))  \
+         , (float)SBUS_Channels[5]                                                                                                                                                                  \
+         , mainMotorAngleOffset);                                                                                                                                                                   \
 	       uint8_t x = 0;
 	       while (msg[x] != NULL)
 	       {

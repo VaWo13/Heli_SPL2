@@ -13,6 +13,7 @@ extern int16_t MPU_Values[6];
 extern uint16_t FIFOCounter;
 
 void MPU6050_resetFIFO();
+void clearFIFO_OF_Flag();
 void MPU6050_WaitForQuaternionSet();
 void MPU6050_ConvertToQuaternions();
 void MPU6050_GetOriginQuaternion();

@@ -32,6 +32,7 @@ extern float Yaw_D_old;
 
 
 void get_XW_diffAngles();
+void reset_WQuaternion();
 void update_PID();
 void getPIDValues();
 void getAngleOffset();

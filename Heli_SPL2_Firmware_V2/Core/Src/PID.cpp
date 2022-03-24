@@ -51,6 +51,20 @@ void get_XW_diffAngles()
 }
 
 /**
+ * @brief 
+ * 
+ * //NOTDONE
+ */
+void reset_WQuaternion()
+{
+  float *p = QuaternionProduct(&FrameOriginQuaternion[0] , QuaternionSLERP(&OriginQuaternion[0], &MPUoutputQuaternion[0]));
+  LoopWQuaternion[0] = *p;
+  LoopWQuaternion[1] = *(p + 1);
+  LoopWQuaternion[2] = *(p + 2);
+  LoopWQuaternion[3] = *(p + 3); 
+}
+
+/**
  * @brief Gets PITCH,ROLL,YAW Y values and integrates/differentiates
  * 
  * --Custom Method!
@@ -64,7 +78,7 @@ void update_PID()
 
   if (Pitch_I_Sum >  500) Pitch_I_Sum =  500;                         //constrain integration (-500 500)
   if (Roll_I_Sum  >  500) Roll_I_Sum  =  500;
-  if (Yaw_I_Sum   > 1000) Yaw_I_Sum   = 1000;
+  if (Yaw_I_Sum   >  500) Yaw_I_Sum   =  500;
   if (Pitch_I_Sum < -500) Pitch_I_Sum = -500;       //NOTDONE use defines for values
   if (Roll_I_Sum  < -500) Roll_I_Sum  = -500;
   if (Yaw_I_Sum   <    0) Yaw_I_Sum   =    0;
@@ -125,6 +139,8 @@ void getAngleOffset()
   if (tuningMode == 2)
   {
     mainMotorAngleOffset = (float)SBUS_Channels[7] / 10;
+    sin_OffsetAngle = sin(((float)mainMotorAngleOffset * 180) / M_PI);
+    cos_OffsetAngle = cos(((float)mainMotorAngleOffset * 180) / M_PI);
   }
 }
 

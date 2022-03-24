@@ -1,7 +1,8 @@
 cmath:106:3:constexpr float std::asin(float)	16	static
 cmath:125:3:constexpr float std::atan(float)	16	static
 PID.cpp:39:6:void get_XW_diffAngles()	16	static
-PID.cpp:58:6:void update_PID()	16	static
-PID.cpp:93:6:void getPIDValues()	8	static
-PID.cpp:123:6:void getAngleOffset()	8	static
-PID.cpp:136:6:void switchTuningMode()	16	static
+PID.cpp:58:6:void reset_WQuaternion()	16	static
+PID.cpp:72:6:void update_PID()	16	static
+PID.cpp:107:6:void getPIDValues()	8	static
+PID.cpp:137:6:void getAngleOffset()	8	static
+PID.cpp:152:6:void switchTuningMode()	16	static
