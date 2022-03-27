@@ -16,7 +16,7 @@ extern float OriginQuaternion[4];
 extern float OriginToOutputQuaternion[4];
 extern float FrameOriginQuaternion[4];
 extern float LoopWQuaternion[4];            //NOTDONE unused? rename?
-extern float LoopXQuaternion[4];
+extern float GyroOriginQuaternion[4];
 extern float LoopXWQuaternion[4];
 extern float updateQuaternion[4];
 

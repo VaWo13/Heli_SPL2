@@ -1,4 +1,5 @@
 #include "main.h"
+#include "MPU6050.h"
 #include "SBUS.h"
 #include "motorControl.h"
 #include "PID.h"
@@ -36,17 +37,19 @@ void updateMainMotorSpeed()
   HAL_ADC_Start(&hadc1);                                                    //start ADC
 	adcValueChannel12 = (uint16_t)ADC1->DR;                                   //read ADC value
 
-  //NOTDONE maybe apply offset rotation without converting to mainMotorAngle and then back but rather use complex numbers
-  //NOTDONE disable PITCH,ROLL when throttle is 0
-  //mainMotorAngle = motorAngle(adcValueChannel12 - 1250, adcValueChannel11 - 1250);
-  TIM4->CCR1 = (uint16_t)(                                                                                                                                                      \
-    fastPPM_CenterTime                                                                                                                                                          \
-  + ((float)SBUS_Channels[2] * PPMmainMotorScaler)                                                                                                                              \
-  + ((((((float)adcValueChannel12 - hall2_center) * hall2_scaler) * cos_OffsetAngle) - ((((float)adcValueChannel11 - hall1_center) * hall1_scaler) * sin_OffsetAngle)) * (PID_Pitch_y * 1))   \
-  + ((((((float)adcValueChannel11 - hall1_center) * hall1_scaler) * cos_OffsetAngle) + ((((float)adcValueChannel12 - hall2_center) * hall2_scaler) * sin_OffsetAngle)) * (PID_Roll_y  * 1))   \
-  );
-  // mainMotorAngle = ((atan2((float)adcValueChannel12 - 1250, (float)adcValueChannel11 - 1250) * 180) / M_PI) + 180;       //NOTDONE use define for value fastPPM_CenterTime
-  // TIM4->CCR1 = (uint16_t)(fastPPM_MinTime + 500 + ((float)SBUS_Channels[2] / 2) + ((float)sin((mainMotorAngle + mainMotorAngleOffset) * (M_PI / 180)) * (PID_Pitch_y / 10)) + ((float)cos((mainMotorAngle + mainMotorAngleOffset) * (M_PI / 180)) * ((float)PID_Roll_y / 10))); //NOTDONE use define for value, try to simplify
+  if (SBUS_Channels[2] > motorDeadzone)
+  {
+    TIM4->CCR1 = (uint16_t)(                                                                                                                                                      \
+      fastPPM_CenterTime                                                                                                                                                          \
+    + ((float)SBUS_Channels[2] * PPMmainMotorScaler)                                                                                                                              \
+    + ((((((float)adcValueChannel12 - hall2_center) * hall2_scaler) * cos_OffsetAngle) - ((((float)adcValueChannel11 - hall1_center) * hall1_scaler) * sin_OffsetAngle)) * (PID_Pitch_y * 1))   \
+    + ((((((float)adcValueChannel11 - hall1_center) * hall1_scaler) * cos_OffsetAngle) + ((((float)adcValueChannel12 - hall2_center) * hall2_scaler) * sin_OffsetAngle)) * (PID_Roll_y  * 1))   \
+    );
+  }
+  else
+  {
+    TIM4->CCR1 = fastPPM_MinTime;
+  }
 }
 
 /**
@@ -58,7 +61,7 @@ void updateMainMotorSpeed()
  */
 void updateTailMotorSpeed()
 {
-  if (SBUS_Channels[2] > tailmotorDeadzone)
+  if (SBUS_Channels[2] > motorDeadzone)
   {
     TIM3->CCR1 = (uint16_t)(slowPPM1_MinTime + PID_Yaw_y);
   }

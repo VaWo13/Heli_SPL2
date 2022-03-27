@@ -1,0 +1,6 @@
+MPU6050_6Axis_MotionApps20.cpp:141:9:uint8_t MPU6050_6Axis_MotionApps20::dmpInitialize()	200	static
+MPU6050_6Axis_MotionApps20.cpp:367:6:bool MPU6050_6Axis_MotionApps20::dmpPacketAvailable()	24	static
+MPU6050_6Axis_MotionApps20.cpp:558:9:uint8_t MPU6050_6Axis_MotionApps20::dmpProcessFIFOPacket(const unsigned char*)	16	static
+MPU6050_6Axis_MotionApps20.cpp:569:9:uint8_t MPU6050_6Axis_MotionApps20::dmpReadAndProcessFIFOPacket(uint8_t, uint8_t*)	48	dynamic
+MPU6050_6Axis_MotionApps20.cpp:594:10:uint16_t MPU6050_6Axis_MotionApps20::dmpGetFIFOPacketSize()	16	static
+MPU6050_6Axis_MotionApps20.cpp:600:9:uint8_t MPU6050_6Axis_MotionApps20::dmpGetCurrentFIFOPacket(uint8_t*)	16	static

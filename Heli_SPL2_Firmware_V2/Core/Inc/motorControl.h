@@ -11,7 +11,10 @@
 #define slowPPM1_MaxTime 2000U            //maximum number of microseconds for ON time (100%)
 #define slowPPM1_CenterTime slowPPM1_MinTime + ((slowPPM1_MaxTime - slowPPM1_MinTime) / 2)
 #define slowPPM1_Pulselength 20000U		    //1Mhz/PPM Hz(50Hz) result is in miroseconds
-#define tailmotorDeadzone -980
+
+#define fastPPM_calcutationTime 60
+
+#define motorDeadzone -950
 #define ESC_StartupDelay 1000             //in milliseconds
 #define BT_debounceTime 1000              //in milliseconds
 

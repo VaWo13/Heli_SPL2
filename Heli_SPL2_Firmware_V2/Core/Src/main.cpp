@@ -90,7 +90,7 @@ int main(void)
   HAL_Init();
 
   /* USER CODE BEGIN Init */
-  HAL_Delay(100);
+
   /* USER CODE END Init */
 
   /* Configure the system clock */
@@ -103,11 +103,11 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_ADC1_Init();
-  MX_I2C1_Init();
   MX_TIM3_Init();
   MX_TIM4_Init();
   MX_TIM11_Init();
   MX_USB_DEVICE_Init();
+  MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
   HAL_TIM_Base_Start(&htim11);    //start TIM11
   MPU6050_init();
@@ -124,7 +124,6 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    HAL_GPIO_TogglePin(ONBOARD_LED_1_GPIO_Port, ONBOARD_LED_1_Pin);   //NOTDONE debug
     loop();
     /* USER CODE END WHILE */
 

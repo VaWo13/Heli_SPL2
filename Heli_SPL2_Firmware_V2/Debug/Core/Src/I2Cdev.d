@@ -30,8 +30,7 @@ Core/Src/I2Cdev.o: ../Core/Src/I2Cdev.cpp ../Core/Inc/I2Cdev.h \
  ../Drivers/STM32F2xx_HAL_Driver/Inc/stm32f2xx_hal_tim_ex.h \
  ../Drivers/STM32F2xx_HAL_Driver/Inc/stm32f2xx_hal_pcd.h \
  ../Drivers/STM32F2xx_HAL_Driver/Inc/stm32f2xx_ll_usb.h \
- ../Drivers/STM32F2xx_HAL_Driver/Inc/stm32f2xx_hal_pcd_ex.h \
- ../Core/Inc/main.h
+ ../Drivers/STM32F2xx_HAL_Driver/Inc/stm32f2xx_hal_pcd_ex.h
 
 ../Core/Inc/I2Cdev.h:
 
@@ -100,5 +99,3 @@ Core/Src/I2Cdev.o: ../Core/Src/I2Cdev.cpp ../Core/Inc/I2Cdev.h \
 ../Drivers/STM32F2xx_HAL_Driver/Inc/stm32f2xx_ll_usb.h:
 
 ../Drivers/STM32F2xx_HAL_Driver/Inc/stm32f2xx_hal_pcd_ex.h:
-
-../Core/Inc/main.h:

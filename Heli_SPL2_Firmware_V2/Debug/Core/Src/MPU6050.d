@@ -32,7 +32,9 @@ Core/Src/MPU6050.o: ../Core/Src/MPU6050.cpp ../Core/Inc/MPU6050.h \
  ../Drivers/STM32F2xx_HAL_Driver/Inc/stm32f2xx_hal_pcd.h \
  ../Drivers/STM32F2xx_HAL_Driver/Inc/stm32f2xx_ll_usb.h \
  ../Drivers/STM32F2xx_HAL_Driver/Inc/stm32f2xx_hal_pcd_ex.h \
- ../Core/Inc/SBUS.h ../Core/Inc/PID.h ../Core/Inc/main.h \
+ ../Core/Inc/helper_3dmath.h ../Core/Inc/I2Cdev.h ../Core/Inc/SBUS.h \
+ ../Core/Inc/PID.h ../Core/Inc/MPU6050_6Axis_MotionApps20.h \
+ ../Core/Inc/MPU6050.h ../Core/Inc/helper_3dmath.h ../Core/Inc/main.h \
  ../USB_DEVICE/App/usbd_cdc_if.h \
  ../Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc/usbd_cdc.h \
  ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h \
@@ -112,9 +114,19 @@ Core/Src/MPU6050.o: ../Core/Src/MPU6050.cpp ../Core/Inc/MPU6050.h \
 
 ../Drivers/STM32F2xx_HAL_Driver/Inc/stm32f2xx_hal_pcd_ex.h:
 
+../Core/Inc/helper_3dmath.h:
+
+../Core/Inc/I2Cdev.h:
+
 ../Core/Inc/SBUS.h:
 
 ../Core/Inc/PID.h:
+
+../Core/Inc/MPU6050_6Axis_MotionApps20.h:
+
+../Core/Inc/MPU6050.h:
+
+../Core/Inc/helper_3dmath.h:
 
 ../Core/Inc/main.h:
 

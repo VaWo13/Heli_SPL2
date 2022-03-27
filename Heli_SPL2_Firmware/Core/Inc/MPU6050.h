@@ -123,7 +123,10 @@ THE SOFTWARE.
 //#define pgm_read_float(x) (*(x))
 //#define PSTR(STR) STR
 
-#ifndef __PGMSPACE_H_
+
+
+
+#endif
         #define __PGMSPACE_H_ 1
         #include <inttypes.h>
 
@@ -159,9 +162,6 @@ THE SOFTWARE.
         #define pgm_read_word_far(addr) pgm_read_word(addr)
         #define pgm_read_dword_far(addr) pgm_read_dword(addr)
         #define pgm_read_float_far(addr) pgm_read_float(addr)
-    #endif
-
-#endif
 
 
 /* Source is from the InvenSense MotionApps v2 demo code. Original source is
@@ -577,6 +577,8 @@ THE SOFTWARE.
 #define MPU6050_DMP_MEMORY_CHUNK_SIZE   16
 
 // note: DMP code memory blocks defined at end of header file
+
+long map(long x, long in_min, long in_max, long out_min, long out_max);
 
 class MPU6050 {
     public:
@@ -1172,6 +1174,7 @@ class MPU6050 {
     private:
         uint8_t devAddr;
         uint8_t buffer[14];
+
 };
 
 #endif /* _MPU6050_H_ */

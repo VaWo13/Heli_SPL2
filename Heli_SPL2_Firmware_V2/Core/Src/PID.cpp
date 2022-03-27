@@ -30,6 +30,16 @@ float Pitch_D_old = 0;
 float Roll_D_old  = 0;
 float Yaw_D_old   = 0;
 
+float MPUoutputQuaternion[4];
+float OriginQuaternion[4];
+float OriginToOutputQuaternion[4];
+float FrameOriginQuaternion[4] = {1, 0, 0, 0};
+float LoopWQuaternion[4] = {1, 0, 0, 0};                  //NOTDONE unused variables? rename
+float GyroOriginQuaternion[4] = {1, 1, 0, 0};
+float LoopXWQuaternion[4];
+float updateQuaternion[4];
+
+
 /**
  * @brief This method gets the difference between X and W as a rotation in the
  * form of a Quaternion and then converts it to usable PITCH,ROLL,YAW angles
@@ -38,15 +48,18 @@ float Yaw_D_old   = 0;
  */
 void get_XW_diffAngles()
 {
-  float *p = QuaternionSLERP(QuaternionProduct(&FrameOriginQuaternion[0] , QuaternionSLERP(&OriginQuaternion[0], &MPUoutputQuaternion[0])), &LoopWQuaternion[0]);
+  //float *p = QuaternionSLERP(QuaternionProduct(QuaternionSLERP(&OriginQuaternion[0], &MPUoutputQuaternion[0]), &FrameOriginQuaternion[0]), &LoopWQuaternion[0]);
+  //float *p = QuaternionNormalize(QuaternionSLERP(FrameOriginQuaternion, QuaternionNormalize(QuaternionProduct(QuaternionNormalize(QuaternionSLERP(QuaternionNormalize(QuaternionProduct(QuaternionNormalize(QuaternionSLERP(OriginQuaternion, MPUoutputQuaternion)), FrameOriginQuaternion)), FrameOriginQuaternion)), LoopWQuaternion))));
+  float *p = QuaternionNormalize(QuaternionProduct(QuaternionNormalize(QuaternionSLERP(QuaternionNormalize(QuaternionProduct(QuaternionNormalize(QuaternionSLERP(GyroOriginQuaternion, QuaternionNormalize(QuaternionProduct(QuaternionNormalize(QuaternionSLERP(OriginQuaternion, GyroOriginQuaternion)), MPUoutputQuaternion)))), FrameOriginQuaternion)), FrameOriginQuaternion)), LoopWQuaternion));
+  
   LoopXWQuaternion[0] = *p;
   LoopXWQuaternion[1] = *(p + 1);
   LoopXWQuaternion[2] = *(p + 2);
   LoopXWQuaternion[3] = *(p + 3);
 
   //difference x-w in degrees
-  PID_Pitch_xw_diff = 2 * (((float)asin(LoopXWQuaternion[1]) * 180) / M_PI);
-  PID_Roll_xw_diff  = 2 * (((float)asin(LoopXWQuaternion[2]) * 180) / M_PI);
+  PID_Pitch_xw_diff = 2 * (((float)asin(LoopXWQuaternion[2]) * 180) / M_PI);
+  PID_Roll_xw_diff  = 2 * (((float)asin(LoopXWQuaternion[1]) * 180) / M_PI);
   PID_Yaw_xw_diff   = 2 * (((float)atan(LoopXWQuaternion[3] / LoopXWQuaternion[0]) * 180) / M_PI);
 }
 
@@ -57,11 +70,11 @@ void get_XW_diffAngles()
  */
 void reset_WQuaternion()
 {
-  float *p = QuaternionProduct(&FrameOriginQuaternion[0] , QuaternionSLERP(&OriginQuaternion[0], &MPUoutputQuaternion[0]));
+  float *p = QuaternionNormalize(QuaternionProduct(QuaternionNormalize(QuaternionSLERP(GyroOriginQuaternion, QuaternionNormalize(QuaternionProduct(QuaternionNormalize(QuaternionSLERP(OriginQuaternion, GyroOriginQuaternion)), MPUoutputQuaternion)))), FrameOriginQuaternion));
   LoopWQuaternion[0] = *p;
   LoopWQuaternion[1] = *(p + 1);
   LoopWQuaternion[2] = *(p + 2);
-  LoopWQuaternion[3] = *(p + 3); 
+  LoopWQuaternion[3] = *(p + 3);
 }
 
 /**
@@ -139,8 +152,8 @@ void getAngleOffset()
   if (tuningMode == 2)
   {
     mainMotorAngleOffset = (float)SBUS_Channels[7] / 10;
-    sin_OffsetAngle = sin(((float)mainMotorAngleOffset * 180) / M_PI);
-    cos_OffsetAngle = cos(((float)mainMotorAngleOffset * 180) / M_PI);
+    sin_OffsetAngle = sin(((float)mainMotorAngleOffset * M_PI) / 180);
+    cos_OffsetAngle = cos(((float)mainMotorAngleOffset * M_PI) / 180);
   }
 }
 

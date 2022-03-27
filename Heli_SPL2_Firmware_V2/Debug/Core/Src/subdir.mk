@@ -14,6 +14,7 @@ C_SRCS += \
 CPP_SRCS += \
 ../Core/Src/I2Cdev.cpp \
 ../Core/Src/MPU6050.cpp \
+../Core/Src/MPU6050_6Axis_MotionApps20.cpp \
 ../Core/Src/PID.cpp \
 ../Core/Src/SBUS.cpp \
 ../Core/Src/main.cpp \
@@ -30,6 +31,7 @@ C_DEPS += \
 OBJS += \
 ./Core/Src/I2Cdev.o \
 ./Core/Src/MPU6050.o \
+./Core/Src/MPU6050_6Axis_MotionApps20.o \
 ./Core/Src/PID.o \
 ./Core/Src/SBUS.o \
 ./Core/Src/main.o \
@@ -44,6 +46,7 @@ OBJS += \
 CPP_DEPS += \
 ./Core/Src/I2Cdev.d \
 ./Core/Src/MPU6050.d \
+./Core/Src/MPU6050_6Axis_MotionApps20.d \
 ./Core/Src/PID.d \
 ./Core/Src/SBUS.d \
 ./Core/Src/main.d \
@@ -60,7 +63,7 @@ Core/Src/%.o: ../Core/Src/%.c Core/Src/subdir.mk
 clean: clean-Core-2f-Src
 
 clean-Core-2f-Src:
-	-$(RM) ./Core/Src/I2Cdev.d ./Core/Src/I2Cdev.o ./Core/Src/MPU6050.d ./Core/Src/MPU6050.o ./Core/Src/PID.d ./Core/Src/PID.o ./Core/Src/SBUS.d ./Core/Src/SBUS.o ./Core/Src/main.d ./Core/Src/main.o ./Core/Src/motorControl.d ./Core/Src/motorControl.o ./Core/Src/realMain.d ./Core/Src/realMain.o ./Core/Src/stm32f2xx_hal_msp.d ./Core/Src/stm32f2xx_hal_msp.o ./Core/Src/stm32f2xx_it.d ./Core/Src/stm32f2xx_it.o ./Core/Src/syscalls.d ./Core/Src/syscalls.o ./Core/Src/sysmem.d ./Core/Src/sysmem.o ./Core/Src/system_stm32f2xx.d ./Core/Src/system_stm32f2xx.o
+	-$(RM) ./Core/Src/I2Cdev.d ./Core/Src/I2Cdev.o ./Core/Src/MPU6050.d ./Core/Src/MPU6050.o ./Core/Src/MPU6050_6Axis_MotionApps20.d ./Core/Src/MPU6050_6Axis_MotionApps20.o ./Core/Src/PID.d ./Core/Src/PID.o ./Core/Src/SBUS.d ./Core/Src/SBUS.o ./Core/Src/main.d ./Core/Src/main.o ./Core/Src/motorControl.d ./Core/Src/motorControl.o ./Core/Src/realMain.d ./Core/Src/realMain.o ./Core/Src/stm32f2xx_hal_msp.d ./Core/Src/stm32f2xx_hal_msp.o ./Core/Src/stm32f2xx_it.d ./Core/Src/stm32f2xx_it.o ./Core/Src/syscalls.d ./Core/Src/syscalls.o ./Core/Src/sysmem.d ./Core/Src/sysmem.o ./Core/Src/system_stm32f2xx.d ./Core/Src/system_stm32f2xx.o
 
 .PHONY: clean-Core-2f-Src
 
