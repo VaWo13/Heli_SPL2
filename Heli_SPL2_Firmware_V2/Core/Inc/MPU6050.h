@@ -4,7 +4,10 @@
 #define MPU6050_cal_Pitch_MaxDev 5
 #define MPU6050_cal_Roll_MaxDev  5
 #define MPU6050_cal_Yaw_MaxDev   5  //in degrees
-#define MPU6050_cal_Time 1000 //in milliseconds
+#define MPU6050_cal_Time 4000 //in milliseconds
+#define pitchDeadzone 5
+#define rollDeadzone 5
+#define yawDeadzone 5
 
 extern uint8_t MPU6050_TX_buf[2];
 extern uint8_t MPU6050_RX_buf[16];

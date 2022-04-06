@@ -13,7 +13,7 @@
 #define SBUS_NumberOfBits SBUS_BitsPerByte * SBUS_NumberOfBytes
 #define SBUS_Baud 100000
 #define APB_Clockspeed 16000000
-#define SBUS_StartTimeOffset -6  //in clock cycles/(microseconds)
+#define SBUS_StartTimeOffset -3  //in clock cycles/(microseconds)
 #define SBUS_ClockCyclesPerBit ((APB_Clockspeed / (TIM11->PSC + 1)) / SBUS_Baud)
 #define SBUS_interruptDeactivationTime 2200
 

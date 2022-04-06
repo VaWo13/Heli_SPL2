@@ -83,10 +83,17 @@ void MPU6050_GetOriginQuaternion()
  */
 void update_FrameOriginQuaternion()//NOTDONE rename and add deadzones
 {
-  updateQuaternion[0] = cos((float)SBUS_Channels[3] / 10000);                   //create rotation Quaternion
-  updateQuaternion[1] = (float)sin((float)SBUS_Channels[0] / (float)10000);
-  updateQuaternion[2] = (float)sin((float)SBUS_Channels[1] / (float)10000);
-  updateQuaternion[3] = sin((float)SBUS_Channels[3] / 10000);
+  float temp_pitch = SBUS_Channels[0];          //deadzones
+  float temp_roll  = SBUS_Channels[1];
+  float temp_yaw   = SBUS_Channels[3];
+  if ((temp_pitch < pitchDeadzone) & (temp_pitch > -pitchDeadzone)) temp_pitch = 0;
+  if ((temp_roll  < rollDeadzone ) & (temp_roll  > -rollDeadzone )) temp_roll  = 0;
+  if ((temp_yaw   < yawDeadzone  ) & (temp_yaw   > -yawDeadzone  )) temp_yaw   = 0;
+  
+  updateQuaternion[0] = cos(temp_yaw          / 50000);                   //create rotation Quaternion
+  updateQuaternion[1] = (float)sin(temp_pitch / 50000);
+  updateQuaternion[2] = (float)sin(temp_roll  / 50000);
+  updateQuaternion[3] = sin(temp_yaw          / 50000);
 
   float *p3 = QuaternionNormalize(QuaternionProduct(QuaternionNormalize(QuaternionSLERP(FrameOriginQuaternion, LoopWQuaternion)), updateQuaternion));
   LoopWQuaternion[0] = *p3;

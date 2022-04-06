@@ -30,16 +30,40 @@
 #define hall2_center (hall2_min + ((hall2_max - hall2_min) / 2.0))
 #define hall2_scaler (1.0 / (hall2_max - hall2_center))
 
+#define MainMotorSmoothingFactor 0.05
+#define periodSmoothingFactor 0.1
+
 #define Pitch_y_scaler 0.5
 #define Roll_y_scaler  0.5
+
+
+
+
 extern uint16_t adcValueChannel11;
+
+extern uint16_t old_adcValueChannel11;
+extern uint16_t adc_Timestamp;
+extern uint16_t old_adc_Timestamp;
+
 extern uint16_t adcValueChannel12;
+
+extern uint16_t MainMotorCommutationTime;
+extern uint16_t old_MainMotorCommutationTime;
+extern uint16_t mainMotorPeriod;
+
 extern uint16_t mainMotorAngle;
-extern int8_t mainMotorAngleOffset;
+extern float mainMotorStartOffset;
+extern float mainMotorMaxOffset;
+extern float mainMotorOffsetK;
+extern float mainMotorOffsetD;
+extern float smoothMainMotorSpeed;
 extern float sin_OffsetAngle;
 extern float cos_OffsetAngle;
 
 void updateMainMotorSpeed();
+void MainMotorDLPF();
 void updateTailMotorSpeed();
+void getMainMotorSpeed();
+void getMainMotorOffset();
 void PPM_init();
 void ESCCalibration();

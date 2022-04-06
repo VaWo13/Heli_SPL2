@@ -151,9 +151,14 @@ void getAngleOffset()
 {
   if (tuningMode == 2)
   {
-    mainMotorAngleOffset = (float)SBUS_Channels[7] / 10;
-    sin_OffsetAngle = sin(((float)mainMotorAngleOffset * M_PI) / 180);
-    cos_OffsetAngle = cos(((float)mainMotorAngleOffset * M_PI) / 180);
+    if ((SBUS_Channels[5] <= 1000) & (SBUS_Channels[5] >= 990))
+    {
+      mainMotorMaxOffset = (((float)SBUS_Channels[7]) / 10);
+    }
+    if ((SBUS_Channels[5] <= 10) & (SBUS_Channels[5] >= -10))
+    {
+      mainMotorStartOffset = 200 + (((float)SBUS_Channels[7]) / 5);
+    }
   }
 }
 

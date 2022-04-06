@@ -24,10 +24,9 @@ uint32_t PinInterruptLastTime = 0;
  */
 void SBUS_RecieveBits()
 {
-  TIM4->CCR1 = (uint16_t)(fastPPM_CenterTime + ((float)SBUS_Channels[2] * PPMmainMotorScaler));
+  TIM4->CCR1 = (uint16_t)(fastPPM_CenterTime + (smoothMainMotorSpeed * PPMmainMotorScaler));
   SBUS_timerCount = TIM11->CNT + SBUS_StartTimeOffset;                                                      //get current clock count from TIM11 + time offset
-  SBUS_RxBitString[0] = true;                                                                               //sets the first value in the array to 1 as the interrupt is not fast
-  for (size_t i = 1; i < SBUS_NumberOfBits; i++)                                                            //\->enough to be able to measure the pin for the first bit
+  for (size_t i = 1; i < SBUS_NumberOfBits; i++)
   {
     ONBOARD_WRITE_3_GPIO_Port->BSRR = (uint32_t)ONBOARD_WRITE_3_Pin << 16U;                                 //NOTDONE debug
     SBUS_RxBitString[i] = ((ONBOARD_READ_IT_3_GPIO_Port->IDR & ONBOARD_READ_IT_3_Pin) != 0 ? true : false); //if the SBUS pin is HIGH then the value is 1 else 0
@@ -37,7 +36,8 @@ void SBUS_RecieveBits()
     }
     SBUS_timerCount += SBUS_ClockCyclesPerBit;
   }
-  SBUSNewPackage = true;
+  SBUS_RxBitString[0] = true;                                                                               //sets the first value in the array to 1 as the interrupt is not fast
+  SBUSNewPackage = true;                                                                                    //\->enough to be able to measure the pin for the first bit
 }
 
 /**

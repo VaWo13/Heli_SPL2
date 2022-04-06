@@ -13,13 +13,17 @@ void loop()
   {
     switch (task)                       //disable the SBUS pin interrupt for the selected tasks
     {
-    case 5:
+    case 7:
       HAL_NVIC_DisableIRQ(EXTI0_IRQn);
       break;
     default:
       break;
     }
+
     updateMainMotorSpeed();
+    MainMotorDLPF();
+    //getMainMotorSpeed();
+    
     //PPM only updates the next cycle
     switch (task)                       //execute the selected task
     {
@@ -41,10 +45,37 @@ void loop()
       }
       switchTuningMode();   //12 us
       break;
-    case 9:
+    case 3:
+      getMainMotorOffset();
+      break;
+    case 4:
+      if (SBUS_Channels[2] > motorDeadzone)
+      {
+        for (size_t i = 0; i < 1; i++)
+        {
+          unsigned char msg[50];
+	        sprintf((char*)msg,"%f %f \r\n"                                                                                                                                                           \
+          , (((((((float)adcValueChannel12 - hall2_center) * hall2_scaler) * cos_OffsetAngle) - ((((float)adcValueChannel11 - hall1_center) * hall1_scaler) * sin_OffsetAngle)) * 100)  \
+          + ((((((float)adcValueChannel11 - hall1_center) * hall1_scaler) * cos_OffsetAngle) + ((((float)adcValueChannel12 - hall2_center) * hall2_scaler) * sin_OffsetAngle)) * 0))  \
+          , mainMotorMaxOffset);
+          uint8_t x = 0;
+	        while (msg[x] != NULL)
+	        {
+	        	x++;
+	        }
+	        unsigned char msgTransmit[x];
+	        for (size_t i = 0; i < x; i++)
+	        {
+	        	msgTransmit[i] = msg[i];
+	        }
+	        CDC_Transmit_FS((unsigned char*)msgTransmit, sizeof(msgTransmit));
+        }
+      }
+      break;
+    case 7:
       MPU6050_resetFIFO();    //300 us
       break;
-    case 10:
+    case 8:
       task = 0;                 //reset to task 1  (keep in mind task ++; below)
 
       if (SBUS_Channels[2] <= motorDeadzone)
@@ -52,7 +83,7 @@ void loop()
         for (size_t i = 0; i < 1; i++)
         {
           unsigned char msg[300];
-	        sprintf((char*)msg,"%f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %hd \r\n"                                                                                                        \
+	        sprintf((char*)msg,"%f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %f \r\n"                                                                                                        \
           , LoopXWQuaternion[0]                                                                                                                                                                      \
           , LoopXWQuaternion[1]                                                                                                                                                                      \
           , LoopXWQuaternion[2]                                                                                                                                                                      \
@@ -73,9 +104,9 @@ void loop()
           , Yaw_PID_k[1] * 100                                                                                                                                                                       \
           , Yaw_PID_k[2] * 100                                                                                                                                                                       \
           , ((((((float)adcValueChannel12 - hall2_center) * hall2_scaler) * cos_OffsetAngle) - ((((float)adcValueChannel11 - hall1_center) * hall1_scaler) * sin_OffsetAngle)) * (PID_Pitch_y * 1))  \
-          , ((((((float)adcValueChannel11 - hall1_center) * hall1_scaler) * cos_OffsetAngle) + ((((float)adcValueChannel12 - hall2_center) * hall2_scaler) * sin_OffsetAngle)) * (PID_Roll_y  * 1))  \
+          + ((((((float)adcValueChannel11 - hall1_center) * hall1_scaler) * cos_OffsetAngle) + ((((float)adcValueChannel12 - hall2_center) * hall2_scaler) * sin_OffsetAngle)) * (PID_Roll_y  * 1))  \
           , (float)SBUS_Channels[5]                                                                                                                                                                  \
-          , mainMotorAngleOffset);                                                                                                                                                                   \
+          , mainMotorMaxOffset);                                                                                                                                                                   \
 	        uint8_t x = 0;
 	        while (msg[x] != NULL)
 	        {
