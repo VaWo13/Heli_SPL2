@@ -90,10 +90,10 @@ void update_FrameOriginQuaternion()//NOTDONE rename and add deadzones
   if ((temp_roll  < rollDeadzone ) & (temp_roll  > -rollDeadzone )) temp_roll  = 0;
   if ((temp_yaw   < yawDeadzone  ) & (temp_yaw   > -yawDeadzone  )) temp_yaw   = 0;
   
-  updateQuaternion[0] = cos(temp_yaw          / 50000);                   //create rotation Quaternion
-  updateQuaternion[1] = (float)sin(temp_pitch / 50000);
-  updateQuaternion[2] = (float)sin(temp_roll  / 50000);
-  updateQuaternion[3] = sin(temp_yaw          / 50000);
+  updateQuaternion[0] = cos(temp_yaw          / 200000);                   //create rotation Quaternion
+  updateQuaternion[1] = (float)sin(temp_pitch / 200000);
+  updateQuaternion[2] = (float)sin(temp_roll  / 200000);
+  updateQuaternion[3] = sin(temp_yaw          / 200000);
 
   float *p3 = QuaternionNormalize(QuaternionProduct(QuaternionNormalize(QuaternionSLERP(FrameOriginQuaternion, LoopWQuaternion)), updateQuaternion));
   LoopWQuaternion[0] = *p3;

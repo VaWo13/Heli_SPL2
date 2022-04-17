@@ -16,11 +16,14 @@ uint16_t MainMotorCommutationTime;
 uint16_t old_MainMotorCommutationTime;
 uint16_t mainMotorPeriod;
 uint16_t mainMotorAngle;
-float mainMotorStartOffset = 189;
-float mainMotorMaxOffset = 43.4;
+float mainMotorStartOffset = -53;
+float mainMotorMaxOffset = -139;
+float mainMotorSkewOffset = 20;
 float smoothMainMotorSpeed;
 float sin_OffsetAngle = sin(((float)mainMotorStartOffset * M_PI) / 180);
 float cos_OffsetAngle = cos(((float)mainMotorStartOffset * M_PI) / 180);
+float sin_SkewOffset = sin((mainMotorSkewOffset * M_PI) / 180);
+float cos_SkewOffset = cos((mainMotorSkewOffset * M_PI) / 180);
 
 
 /**
@@ -36,6 +39,7 @@ void updateMainMotorSpeed()
   ADC1->SQR3 &= ~ADC_SQR3_RK(ADC_SQR3_SQ1, 1);                              //reset Rank
   ADC1->SQR3 |= ADC_SQR3_RK(ADC_CHANNEL_11, 1);                             //set new Rank Channel 11
   HAL_ADC_Start(&hadc1);                                                    //start ADC
+  HAL_ADC_PollForConversion(&hadc1, 100);
 	adcValueChannel11 = (uint16_t)ADC1->DR;                                   //read ADC value
 
   adc_Timestamp = TIM11->CNT;
@@ -45,16 +49,27 @@ void updateMainMotorSpeed()
   ADC1->SQR3 &= ~ADC_SQR3_RK(ADC_SQR3_SQ1, 1);                              //reset Rank
   ADC1->SQR3 |= ADC_SQR3_RK(ADC_CHANNEL_12, 1);                             //set new Rank Channel 12
   HAL_ADC_Start(&hadc1);                                                    //start ADC
+  HAL_ADC_PollForConversion(&hadc1, 100);
 	adcValueChannel12 = (uint16_t)ADC1->DR;                                   //read ADC value
 
   if (smoothMainMotorSpeed > motorDeadzone)
   {
-    TIM4->CCR1 = (uint16_t)(                                                                                                                                                      \
-      fastPPM_CenterTime                                                                                                                                                          \
-    + (smoothMainMotorSpeed * PPMmainMotorScaler)                                                                                                                              \
-    + ((((((float)adcValueChannel12 - hall2_center) * hall2_scaler) * cos_OffsetAngle) - ((((float)adcValueChannel11 - hall1_center) * hall1_scaler) * sin_OffsetAngle)) * (PID_Pitch_y * -1))   \
-    + ((((((float)adcValueChannel11 - hall1_center) * hall1_scaler) * cos_OffsetAngle) + ((((float)adcValueChannel12 - hall2_center) * hall2_scaler) * sin_OffsetAngle)) * (PID_Roll_y  *  1))   \
+    TIM4->CCR1 = (uint16_t)(                                                                                                                                                                                                                                                                                                                                                                \
+      fastPPM_CenterTime                                                                                                                                                                                                                                                                                                                                                                    \
+    + (smoothMainMotorSpeed * PPMmainMotorScaler)                                                                                                                                                                                                                                                                                                                                           \
+    + ((((((((float)adcValueChannel12 - hall2_center) * hall2_scaler) / cos_SkewOffset) + ((((float)adcValueChannel11 - hall1_center) * hall1_scaler) * sin_SkewOffset)) * cos_OffsetAngle) - ((((float)adcValueChannel11 - hall1_center) * hall1_scaler) * sin_OffsetAngle)) * (/*((float)SBUS_Channels[1] / 100)*/PID_Pitch_y *  0.01 * (smoothMainMotorSpeed + SBUS_mappedValueMax)))    \
+    + ((((((float)adcValueChannel11 - hall1_center) * hall1_scaler) * cos_OffsetAngle) + ((((((float)adcValueChannel12 - hall2_center) * hall2_scaler) / cos_SkewOffset) + ((((float)adcValueChannel11 - hall1_center) * hall1_scaler) * sin_SkewOffset)) * sin_OffsetAngle)) * (/*((float)SBUS_Channels[0] / 100)*/PID_Roll_y  * -0.01 * (smoothMainMotorSpeed + SBUS_mappedValueMax)))    \
     );
+
+    
+    if (TIM4->CCR1 > fastPPM_MaxTime)
+    {
+      TIM4->CCR1 = fastPPM_MaxTime;
+    }
+    if (TIM4->CCR1 < fastPPM_MinTime)
+    {
+      TIM4->CCR1 = fastPPM_MinTime;
+    }
   }
   else
   {
@@ -120,7 +135,7 @@ void getMainMotorSpeed()
  */
 void getMainMotorOffset()
 {
-  float currentAngleOffset = mainMotorStartOffset + (((smoothMainMotorSpeed + 999) * 0.001) * (mainMotorMaxOffset));
+  float currentAngleOffset = mainMotorStartOffset + (((smoothMainMotorSpeed + SBUS_mappedValueMax) * 0.001) * (mainMotorMaxOffset));
   sin_OffsetAngle = sin((currentAngleOffset * M_PI) / 180);
   cos_OffsetAngle = cos((currentAngleOffset * M_PI) / 180);
 }

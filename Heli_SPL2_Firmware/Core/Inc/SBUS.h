@@ -19,7 +19,7 @@
 //total of 12 bit per byte
 
 #define SBUS_BitsPerByte 12
-#define SBUS_NumberOfBytes 12   //default 25
+#define SBUS_NumberOfBytes 25   //default 25
 #define SBUS_NumberOfChannels 8
 #define SBUS_NumberOfBits SBUS_BitsPerByte * SBUS_NumberOfBytes
 

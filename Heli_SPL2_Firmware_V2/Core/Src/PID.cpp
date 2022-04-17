@@ -20,9 +20,9 @@ float PID_Pitch_y;
 float PID_Roll_y;
 float PID_Yaw_y;
 
-float Pitch_PID_k[3] = {0, 0, 0};
-float Roll_PID_k[3]  = {0, 0, 0};
-float Yaw_PID_k[3]   = {0, 0, 0};
+float Pitch_PID_k[3] = {0.0834, 0.0000, 0.0280};//{0.133, 0.0178, 0.1484};
+float Roll_PID_k[3]  = {0.0765, 0.0088, 0.0448};//{0.0723, 0.0066, 0.0543};
+float Yaw_PID_k[3]   = {0.3920, 0.1026, 2.7184};
 float Pitch_I_Sum = 0;
 float Roll_I_Sum  = 0;
 float Yaw_I_Sum   = 0;            //NOTDONE unused? rename?
@@ -89,16 +89,16 @@ void update_PID()
   Roll_I_Sum  += (PID_Roll_xw_diff  * Roll_PID_k[1] );
   Yaw_I_Sum   += (PID_Yaw_xw_diff   * Yaw_PID_k[1]  );
 
-  if (Pitch_I_Sum >  500) Pitch_I_Sum =  500;                         //constrain integration (-500 500)
-  if (Roll_I_Sum  >  500) Roll_I_Sum  =  500;
-  if (Yaw_I_Sum   >  500) Yaw_I_Sum   =  500;
-  if (Pitch_I_Sum < -500) Pitch_I_Sum = -500;       //NOTDONE use defines for values
-  if (Roll_I_Sum  < -500) Roll_I_Sum  = -500;
-  if (Yaw_I_Sum   <    0) Yaw_I_Sum   =    0;
+  if (Pitch_I_Sum >  50) Pitch_I_Sum =  50;                         //constrain integration (-500 500)
+  if (Roll_I_Sum  >  50) Roll_I_Sum  =  50;
+  if (Yaw_I_Sum   > 200) Yaw_I_Sum   = 200;
+  if (Pitch_I_Sum < -50) Pitch_I_Sum = -50;       //NOTDONE use defines for values
+  if (Roll_I_Sum  < -50) Roll_I_Sum  = -50;
+  if (Yaw_I_Sum   <   0) Yaw_I_Sum   =   0;
 
   PID_Pitch_y = (PID_Pitch_xw_diff * Pitch_PID_k[0] * 10) + Pitch_I_Sum + ((PID_Pitch_xw_diff - Pitch_D_old) * Pitch_PID_k[2] * 100);   //combine P,I,D values
   PID_Roll_y  = (PID_Roll_xw_diff  * Roll_PID_k[0]  * 10) + Roll_I_Sum  + ((PID_Roll_xw_diff  - Roll_D_old ) * Roll_PID_k[2]  * 100);
-  PID_Yaw_y   = (PID_Yaw_xw_diff   * Yaw_PID_k[0]   * 10) + Yaw_I_Sum   + ((PID_Yaw_xw_diff   - Yaw_D_old  ) * Yaw_PID_k[2]   * 100);          //NOTDONE use defines for values
+  PID_Yaw_y   = (PID_Yaw_xw_diff   * Yaw_PID_k[0]   * 20) + Yaw_I_Sum   + ((PID_Yaw_xw_diff   - Yaw_D_old  ) * Yaw_PID_k[2]   * 100);          //NOTDONE use defines for values
 
   Pitch_D_old = PID_Pitch_xw_diff;                                                                                                      // differentiate
   Roll_D_old  = PID_Roll_xw_diff ;
@@ -123,21 +123,21 @@ void getPIDValues()
   {
     if ((SBUS_Channels[5] <= 1000) & (SBUS_Channels[5] >= 990))
     {
-      if ((SBUS_Channels[6] <= 1000) & (SBUS_Channels[6] >=   990)) Pitch_PID_k[0] = 0.5 + ((float)SBUS_Channels[7] / 2000);    //NOTDONE use defines for values
-      if ((SBUS_Channels[6] <=   10) & (SBUS_Channels[6] >=   -10)) Pitch_PID_k[1] = 0.5 + ((float)SBUS_Channels[7] / 2000);    //NOTDONE use defines for values
-      if ((SBUS_Channels[6] <= -990) & (SBUS_Channels[6] >= -1000)) Pitch_PID_k[2] = 0.5 + ((float)SBUS_Channels[7] / 2000);    //NOTDONE use defines for values       
+      if ((SBUS_Channels[6] <= 1000) & (SBUS_Channels[6] >=   990)) Pitch_PID_k[0] = (1 + ((float)SBUS_Channels[7] / SBUS_mappedValueMax)) * 0.08;    //NOTDONE use defines for values
+      if ((SBUS_Channels[6] <=   10) & (SBUS_Channels[6] >=   -10)) Pitch_PID_k[1] = (1 + ((float)SBUS_Channels[7] / SBUS_mappedValueMax)) * 0.02;    //NOTDONE use defines for values
+      if ((SBUS_Channels[6] <= -990) & (SBUS_Channels[6] >= -1000)) Pitch_PID_k[2] = (1 + ((float)SBUS_Channels[7] / SBUS_mappedValueMax)) * 0.08;    //NOTDONE use defines for values       
     }
     if ((SBUS_Channels[5] <= 10) & (SBUS_Channels[5] >= -10))
     {
-      if ((SBUS_Channels[6] <= 1000) & (SBUS_Channels[6] >=   990)) Roll_PID_k[0]  = 0.5 + ((float)SBUS_Channels[7] / 2000);    //NOTDONE use defines for values
-      if ((SBUS_Channels[6] <=   10) & (SBUS_Channels[6] >=   -10)) Roll_PID_k[1]  = 0.5 + ((float)SBUS_Channels[7] / 2000);    //NOTDONE use defines for values
-      if ((SBUS_Channels[6] <= -990) & (SBUS_Channels[6] >= -1000)) Roll_PID_k[2]  = 0.5 + ((float)SBUS_Channels[7] / 2000);    //NOTDONE use defines for values       
+      if ((SBUS_Channels[6] <= 1000) & (SBUS_Channels[6] >=   990)) Roll_PID_k[0]  = (1 + ((float)SBUS_Channels[7] / SBUS_mappedValueMax)) * 0.08;    //NOTDONE use defines for values
+      if ((SBUS_Channels[6] <=   10) & (SBUS_Channels[6] >=   -10)) Roll_PID_k[1]  = (1 + ((float)SBUS_Channels[7] / SBUS_mappedValueMax)) * 0.02;    //NOTDONE use defines for values
+      if ((SBUS_Channels[6] <= -990) & (SBUS_Channels[6] >= -1000)) Roll_PID_k[2]  = (1 + ((float)SBUS_Channels[7] / SBUS_mappedValueMax)) * 0.08;    //NOTDONE use defines for values       
     }
     if ((SBUS_Channels[5] <= -990) & (SBUS_Channels[5] >= -1000))
     {
-      if ((SBUS_Channels[6] <= 1000) & (SBUS_Channels[6] >=   990)) Yaw_PID_k[0]   = 0.5 + ((float)SBUS_Channels[7] / 2000);    //NOTDONE use defines for values
-      if ((SBUS_Channels[6] <=   10) & (SBUS_Channels[6] >=   -10)) Yaw_PID_k[1]   = 0.5 + ((float)SBUS_Channels[7] / 2000);    //NOTDONE use defines for values
-      if ((SBUS_Channels[6] <= -990) & (SBUS_Channels[6] >= -1000)) Yaw_PID_k[2]   = 0.5 + ((float)SBUS_Channels[7] / 2000);    //NOTDONE use defines for values       
+      if ((SBUS_Channels[6] <= 1000) & (SBUS_Channels[6] >=   990)) Yaw_PID_k[0]   = (1 + ((float)SBUS_Channels[7] / SBUS_mappedValueMax)) * 0.8;    //NOTDONE use defines for values
+      if ((SBUS_Channels[6] <=   10) & (SBUS_Channels[6] >=   -10)) Yaw_PID_k[1]   = (1 + ((float)SBUS_Channels[7] / SBUS_mappedValueMax)) * 0.1;    //NOTDONE use defines for values
+      if ((SBUS_Channels[6] <= -990) & (SBUS_Channels[6] >= -1000)) Yaw_PID_k[2]   = (1 + ((float)SBUS_Channels[7] / SBUS_mappedValueMax)) * 3.2;    //NOTDONE use defines for values       
     }
   }
 }
@@ -153,12 +153,19 @@ void getAngleOffset()
   {
     if ((SBUS_Channels[5] <= 1000) & (SBUS_Channels[5] >= 990))
     {
-      mainMotorMaxOffset = (((float)SBUS_Channels[7]) / 10);
+      //mainMotorMaxOffset = -139 + (((float)SBUS_Channels[7]) / 20);
     }
     if ((SBUS_Channels[5] <= 10) & (SBUS_Channels[5] >= -10))
     {
-      mainMotorStartOffset = 200 + (((float)SBUS_Channels[7]) / 5);
+      mainMotorStartOffset = -53 + (((float)SBUS_Channels[7]) / 50);
     }
+    if ((SBUS_Channels[5] <= -990) & (SBUS_Channels[5] >= -1000))
+    {
+      mainMotorSkewOffset = (float)SBUS_Channels[7] / 25;
+      sin_SkewOffset = sin((mainMotorSkewOffset * M_PI) / 180);
+      cos_SkewOffset = cos((mainMotorSkewOffset * M_PI) / 180);
+    }
+
   }
 }
 

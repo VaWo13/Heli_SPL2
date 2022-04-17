@@ -5,4 +5,4 @@ PID.cpp:71:6:void reset_WQuaternion()	16	static
 PID.cpp:85:6:void update_PID()	16	static
 PID.cpp:120:6:void getPIDValues()	8	static
 PID.cpp:150:6:void getAngleOffset()	8	static
-PID.cpp:170:6:void switchTuningMode()	16	static
+PID.cpp:177:6:void switchTuningMode()	16	static

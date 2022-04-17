@@ -12,7 +12,7 @@
 #define slowPPM1_CenterTime slowPPM1_MinTime + ((slowPPM1_MaxTime - slowPPM1_MinTime) / 2)
 #define slowPPM1_Pulselength 20000U		    //1Mhz/PPM Hz(50Hz) result is in miroseconds
 
-#define fastPPM_calcutationTime 60
+#define fastPPM_calcutationTime 50
 
 #define motorDeadzone -950
 #define ESC_StartupDelay 1000             //in milliseconds
@@ -21,12 +21,12 @@
 #define PPMmainMotorScaler ((float)(fastPPM_MaxTime - fastPPM_MinTime) / (SBUS_mappedValueMax - SBUS_mappedValueMin))
 #define PPMtailMotorScaler ((float)(slowPPM1_MaxTime - slowPPM1_MinTime) / (SBUS_mappedValueMax - SBUS_mappedValueMin))
 
-#define hall1_min 230                                               //adcValueChannel11
-#define hall1_max 2300
+#define hall1_min 245                                               //adcValueChannel11
+#define hall1_max 2273
 #define hall1_center (hall1_min + ((hall1_max - hall1_min) / 2.0))
 #define hall1_scaler (1.0 / (hall1_max - hall1_center))
-#define hall2_min 240                                               //adcValueChannel12
-#define hall2_max 2280
+#define hall2_min 232                                               //adcValueChannel12
+#define hall2_max 2295
 #define hall2_center (hall2_min + ((hall2_max - hall2_min) / 2.0))
 #define hall2_scaler (1.0 / (hall2_max - hall2_center))
 
@@ -54,11 +54,12 @@ extern uint16_t mainMotorPeriod;
 extern uint16_t mainMotorAngle;
 extern float mainMotorStartOffset;
 extern float mainMotorMaxOffset;
-extern float mainMotorOffsetK;
-extern float mainMotorOffsetD;
+extern float mainMotorSkewOffset;
 extern float smoothMainMotorSpeed;
 extern float sin_OffsetAngle;
 extern float cos_OffsetAngle;
+extern float sin_SkewOffset;
+extern float cos_SkewOffset;
 
 void updateMainMotorSpeed();
 void MainMotorDLPF();

@@ -64,9 +64,8 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define ONBOARD_READ_IT_3_Pin GPIO_PIN_0
-#define ONBOARD_READ_IT_3_GPIO_Port GPIOC
-#define ONBOARD_READ_IT_3_EXTI_IRQn EXTI0_IRQn
+#define ONBOARD_READ_3_Pin GPIO_PIN_0
+#define ONBOARD_READ_3_GPIO_Port GPIOC
 #define ONBOARD_ADC_2_Pin GPIO_PIN_1
 #define ONBOARD_ADC_2_GPIO_Port GPIOC
 #define ONBOARD_ADC_1_Pin GPIO_PIN_2
