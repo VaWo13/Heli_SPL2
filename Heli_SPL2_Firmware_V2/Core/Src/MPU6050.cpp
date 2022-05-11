@@ -93,7 +93,7 @@ void update_FrameOriginQuaternion()//NOTDONE rename and add deadzones
   updateQuaternion[0] = cos(temp_yaw          / 200000);                   //create rotation Quaternion
   updateQuaternion[1] = (float)sin(temp_pitch / 200000);
   updateQuaternion[2] = (float)sin(temp_roll  / 200000);
-  updateQuaternion[3] = sin(temp_yaw          / 200000);
+  updateQuaternion[3] = sin(temp_yaw          / 100000);
 
   float *p3 = QuaternionNormalize(QuaternionProduct(QuaternionNormalize(QuaternionSLERP(FrameOriginQuaternion, LoopWQuaternion)), updateQuaternion));
   LoopWQuaternion[0] = *p3;
@@ -112,24 +112,37 @@ void MPU6050_init()
   HAL_NVIC_DisableIRQ(EXTI0_IRQn);  //disable SBUS pin interrupt
   HAL_Delay(10);
   mpu.initialize();                 //initialize that object
-  if (mpu.testConnection()) HAL_GPIO_TogglePin(ONBOARD_LED_1_GPIO_Port, ONBOARD_LED_1_Pin);   //NOTDONE debug
+  if (mpu.testConnection()) 
+  {
+    LED_status_MPU_init();   //NOTDONE debug
+  }
+  else
+  {
+    while (1)
+    {
+      LED_status_MPU_initFail();
+    }
+  }
+  
   uint8_t devStatus = mpu.dmpInitialize();              //initialize DMP (Digital Motion Processing)
   
-  mpu.setXAccelOffset( 1044);         //apply custom offset values
-  mpu.setYAccelOffset(-1699);
-  mpu.setZAccelOffset(  692);
-  mpu.setXGyroOffset(   -53);
-  mpu.setYGyroOffset(   -26);
-  mpu.setZGyroOffset(   -33);
+  mpu.setXAccelOffset(  955);         //apply custom offset values
+  mpu.setYAccelOffset(-1707);
+  mpu.setZAccelOffset(  802);
+  mpu.setXGyroOffset(   -12);
+  mpu.setYGyroOffset(    -4);
+  mpu.setZGyroOffset(   -27);
 
   if (devStatus == 0) {
       mpu.setDMPEnabled(true);
       mpu.getIntStatus();
       packetSize = 42;
   } else {
-      HAL_GPIO_TogglePin(ONBOARD_LED_2_GPIO_Port, ONBOARD_LED_2_Pin);   //NOTDONE debug
+    while (1)
+    {
+      LED_status_MPU_initFail();
+    }
   }
-  HAL_GPIO_TogglePin(ONBOARD_LED_2_GPIO_Port, ONBOARD_LED_2_Pin);   //NOTDONE debug
   HAL_NVIC_EnableIRQ(EXTI0_IRQn);   //enable SBUS pin interrupt
 }
 
@@ -140,8 +153,9 @@ void MPU6050_init()
  */
 void MPU6050_calibration()//NOTDONE comment
 {
-  HAL_NVIC_DisableIRQ(EXTI0_IRQn);  //disable SBUS pin interrupt
+  LED_ResetAll();  
   uint8_t MPU_calibrated = false;
+
   while (MPU_calibrated == false)
   {
     uint16_t counter = 0;
@@ -165,6 +179,8 @@ void MPU6050_calibration()//NOTDONE comment
     (counter < MPU6050_cal_Time)                                                                                                          \
     )                                                                                                                                     \
     {
+      LED_status_Gyro_cal();
+
       MPU6050_resetFIFO();
       MPU6050_WaitForQuaternionSet();
       MPU6050_ConvertToQuaternions();
@@ -192,13 +208,15 @@ void MPU6050_calibration()//NOTDONE comment
     }
     if (counter >= MPU6050_cal_Time)
     {
-      MPU6050_GetOriginQuaternion();
       MPU_calibrated = true;
     }
-    HAL_GPIO_TogglePin(ONBOARD_LED_4_GPIO_Port, ONBOARD_LED_4_Pin);
+
+    if (MPU_calibrated == false)
+    {
+      LED_status_Gyro_calFail();
+    }
   }
   MPU6050_GetOriginQuaternion();
-  HAL_NVIC_EnableIRQ(EXTI0_IRQn);   //enable SBUS pin interrupt
 
   float *p = QuaternionNormalize(GyroOriginQuaternion);
   GyroOriginQuaternion[0] = *p;
@@ -3957,7 +3975,6 @@ uint16_t MPU6050::dmpGetFIFOPacketSize() {
      uint16_t BreakTimer = TIM11->CNT;
      bool packetReceived = false;
      do {
-       HAL_GPIO_TogglePin(ONBOARD_LED_4_GPIO_Port, ONBOARD_LED_4_Pin);   //NOTDONE debug
          if ((fifoC = getFIFOCount())  > length) {
 
              if (fifoC > 200) { // if you waited to get the FIFO buffer to > 200 bytes it will take longer to get the last packet in the FIFO Buffer than it will take to  reset the buffer and wait for the next to arrive
@@ -3982,7 +3999,6 @@ uint16_t MPU6050::dmpGetFIFOPacketSize() {
          packetReceived = fifoC == length;
          if (!packetReceived && (TIM11->CNT - BreakTimer) > (1000)) return 0;
      } while (!packetReceived);
-            HAL_GPIO_TogglePin(ONBOARD_LED_4_GPIO_Port, ONBOARD_LED_4_Pin);   //NOTDONE debug
 
      getFIFOBytes(data, length); //Get 1 packet
      return 1;

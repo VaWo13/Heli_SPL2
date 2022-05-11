@@ -11,10 +11,10 @@ void loop()
 {
   if (TIM4->CNT >= (fastPPM_Pulselength - fastPPM_calcutationTime))
   {
-    HAL_GPIO_TogglePin(ONBOARD_WRITE_3_GPIO_Port, ONBOARD_WRITE_3_Pin);
     updateMainMotorSpeed();   //40 us
-    HAL_GPIO_TogglePin(ONBOARD_WRITE_3_GPIO_Port, ONBOARD_WRITE_3_Pin);
-
+    getMainMotorSpeed();    //16 us
+    // HAL_GPIO_TogglePin(ONBOARD_WRITE_3_GPIO_Port, ONBOARD_WRITE_3_Pin);
+    // HAL_GPIO_TogglePin(ONBOARD_WRITE_3_GPIO_Port, ONBOARD_WRITE_3_Pin);
     switch (task)                       //execute the selected task
     {
     case 1:
@@ -36,39 +36,38 @@ void loop()
       MainMotorDLPF();    //4 us
       break;
     case 2:
-      task = 0;                 //reset to task 1  (keep in mind task ++; below)
-
       if (smoothMainMotorSpeed <= motorDeadzone)    //750 us
       {
         for (size_t i = 0; i < 1; i++)
         {
           unsigned char msg[300];
-	        sprintf((char*)msg,"%f %f %f %f %f %f %f %f %f %f %f %f \r\n"   \
-          , Pitch_PID_k[0] * 10                                           \
-          , Pitch_PID_k[1] * 10                                           \
-          , Pitch_PID_k[2] * 10                                           \
-          , Roll_PID_k[0] * 10                                            \
-          , Roll_PID_k[1] * 10                                            \
-          , Roll_PID_k[2] * 10                                            \
-          , Yaw_PID_k[0] * 10                                             \
-          , Yaw_PID_k[1] * 10                                             \
-          , Yaw_PID_k[2] * 10                                             \
-          , mainMotorStartOffset                                          \
-          , mainMotorSkewOffset                                           \
-          , mainMotorMaxOffset);                                          \
+	        sprintf((char*)msg,"%f %f %f %f %f %f %f %f %f %f %f %f %f %f %f \r\n"  \
+          , Pitch_PID_k[0] * 10                                                   \
+          , Pitch_PID_k[1] * 10                                                   \
+          , Pitch_PID_k[2] * 10                                                   \
+          , Roll_PID_k[0] * 10                                                    \
+          , Roll_PID_k[1] * 10                                                    \
+          , Roll_PID_k[2] * 10                                                    \
+          , Yaw_PID_k[0] * 10                                                     \
+          , Yaw_PID_k[1] * 10                                                     \
+          , Yaw_PID_k[2] * 10                                                     \
+          , mainMotorCyclicSpeed                                                  \
+          , Roll_DCPL_k                                                           \
+          , Pitch_DCPL_k                                                          \
+          , Pitch_output                                                          \
+          , Roll_output                                                           \
+          , DCPL_angle);                                                          \
 	        uint8_t x = 0;
 	        while (msg[x] != NULL)
 	        {
 	        	x++;
 	        }
-	        unsigned char msgTransmit[x];
-	        for (size_t i = 0; i < x; i++)
-	        {
-	        	msgTransmit[i] = msg[i];
-	        }
-	        CDC_Transmit_FS((unsigned char*)msgTransmit, sizeof(msgTransmit));
+	        CDC_Transmit_FS(msg, x);
         }
       }
+      break;
+    case 3:
+      task = 0;                 //reset to task 1  (keep in mind task ++; below)
       break;
     default:
       break;

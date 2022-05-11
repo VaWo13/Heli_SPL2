@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include "human_interface.h"
 
 #define MPU6050_Adresse 0x68 << 1
 #define MPU6050_cal_Pitch_MaxDev 5

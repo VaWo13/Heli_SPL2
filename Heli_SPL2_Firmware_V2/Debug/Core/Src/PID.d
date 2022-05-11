@@ -1,5 +1,5 @@
 Core/Src/PID.o: ../Core/Src/PID.cpp ../Core/Inc/PID.h \
- ../Core/Inc/MPU6050.h ../Core/Inc/I2Cdev.h ../Core/Inc/main.h \
+ ../Core/Inc/MPU6050.h ../Core/Inc/human_interface.h ../Core/Inc/main.h \
  ../Drivers/STM32F2xx_HAL_Driver/Inc/stm32f2xx_hal.h \
  ../Core/Inc/stm32f2xx_hal_conf.h \
  ../Drivers/STM32F2xx_HAL_Driver/Inc/stm32f2xx_hal_rcc.h \
@@ -33,14 +33,14 @@ Core/Src/PID.o: ../Core/Src/PID.cpp ../Core/Inc/PID.h \
  ../Drivers/STM32F2xx_HAL_Driver/Inc/stm32f2xx_hal_pcd.h \
  ../Drivers/STM32F2xx_HAL_Driver/Inc/stm32f2xx_ll_usb.h \
  ../Drivers/STM32F2xx_HAL_Driver/Inc/stm32f2xx_hal_pcd_ex.h \
- ../Core/Inc/helper_3dmath.h ../Core/Inc/motorControl.h \
- ../Core/Inc/SBUS.h ../Core/Inc/main.h
+ ../Core/Inc/I2Cdev.h ../Core/Inc/helper_3dmath.h \
+ ../Core/Inc/motorControl.h ../Core/Inc/SBUS.h ../Core/Inc/main.h
 
 ../Core/Inc/PID.h:
 
 ../Core/Inc/MPU6050.h:
 
-../Core/Inc/I2Cdev.h:
+../Core/Inc/human_interface.h:
 
 ../Core/Inc/main.h:
 
@@ -109,6 +109,8 @@ Core/Src/PID.o: ../Core/Src/PID.cpp ../Core/Inc/PID.h \
 ../Drivers/STM32F2xx_HAL_Driver/Inc/stm32f2xx_ll_usb.h:
 
 ../Drivers/STM32F2xx_HAL_Driver/Inc/stm32f2xx_hal_pcd_ex.h:
+
+../Core/Inc/I2Cdev.h:
 
 ../Core/Inc/helper_3dmath.h:
 

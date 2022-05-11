@@ -26,6 +26,7 @@
 #include "MPU6050.h"
 #include "motorControl.h"
 #include "SBUS.h"
+#include "human_interface.h"
 
 /* USER CODE END Includes */
 
@@ -115,23 +116,39 @@ int main(void)
   MX_DMA_Init();
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
-  HAL_TIM_Base_Start(&htim11);    //start TIM11
+
+
+  HAL_TIM_Base_Start(&htim11);                                        //start TIM11
   MPU6050_init();
   PPM_init();
-  HAL_UART_Receive_DMA(&huart1, SBUS_RxBytes, SBUS_NumberOfBytes);
-  while (SBUS_Bytes[0] != 0x0F)     //only continue if the heli is connected to the remote
+  HAL_UART_Receive_DMA(&huart1, SBUS_RxBytes, SBUS_NumberOfBytes);    //start UART reception using DMA (Direct Memory Access)
+
+  LED_ResetAll();
+  while (SBUS_Bytes[0] != 0x0F)                                       //only continue if the heli is connected to the remote (start byte is '0x0F')
   {
     if (SBUSNewPackage == true) SBUS_postProcessing();
+    LED_status_WaitingForSBUS();
   }
-  ESCCalibration();
+
+  ESCCalibration();                                                   //
+
+  LED_ResetAll();
+  while (SBUS_Channels[2] > motorDeadzone)                           //only continue if throttle is off
+  {
+    if (SBUSNewPackage == true) SBUS_postProcessing();
+    LED_status_WaitingForThrottle0();
+  }
+  
   MPU6050_calibration();
+
+  LED_status_Ready();
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    loop();
+    loop();                                                           //Main Loop
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -286,7 +303,7 @@ static void MX_TIM3_Init(void)
   htim3.Instance = TIM3;
   htim3.Init.Prescaler = 60 - 1;
   htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim3.Init.Period = 20000 - 1;
+  htim3.Init.Period = slowPPM1_Pulselength - 1;
   htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim3.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_PWM_Init(&htim3) != HAL_OK)
@@ -335,7 +352,7 @@ static void MX_TIM4_Init(void)
   htim4.Instance = TIM4;
   htim4.Init.Prescaler = 60 - 1;
   htim4.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim4.Init.Period = 2500 -1;
+  htim4.Init.Period = fastPPM_Pulselength -1;
   htim4.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim4.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_PWM_Init(&htim4) != HAL_OK)

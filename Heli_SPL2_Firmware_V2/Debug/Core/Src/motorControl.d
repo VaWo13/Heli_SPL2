@@ -32,8 +32,8 @@ Core/Src/motorControl.o: ../Core/Src/motorControl.cpp ../Core/Inc/main.h \
  ../Drivers/STM32F2xx_HAL_Driver/Inc/stm32f2xx_hal_pcd.h \
  ../Drivers/STM32F2xx_HAL_Driver/Inc/stm32f2xx_ll_usb.h \
  ../Drivers/STM32F2xx_HAL_Driver/Inc/stm32f2xx_hal_pcd_ex.h \
- ../Core/Inc/MPU6050.h ../Core/Inc/I2Cdev.h ../Core/Inc/main.h \
- ../Core/Inc/helper_3dmath.h ../Core/Inc/SBUS.h \
+ ../Core/Inc/MPU6050.h ../Core/Inc/human_interface.h ../Core/Inc/main.h \
+ ../Core/Inc/I2Cdev.h ../Core/Inc/helper_3dmath.h ../Core/Inc/SBUS.h \
  ../Core/Inc/motorControl.h ../Core/Inc/PID.h \
  ../USB_DEVICE/App/usbd_cdc_if.h \
  ../Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc/usbd_cdc.h \
@@ -114,9 +114,11 @@ Core/Src/motorControl.o: ../Core/Src/motorControl.cpp ../Core/Inc/main.h \
 
 ../Core/Inc/MPU6050.h:
 
-../Core/Inc/I2Cdev.h:
+../Core/Inc/human_interface.h:
 
 ../Core/Inc/main.h:
+
+../Core/Inc/I2Cdev.h:
 
 ../Core/Inc/helper_3dmath.h:
 

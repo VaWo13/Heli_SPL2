@@ -1,5 +1,4 @@
 #include "usbd_cdc_if.h"
-
 #include <stdio.h>
 #include <math.h>
 

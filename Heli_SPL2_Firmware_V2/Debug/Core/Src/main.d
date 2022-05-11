@@ -42,9 +42,10 @@ Core/Src/main.o: ../Core/Src/main.cpp ../Core/Inc/main.h \
  ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_core.h \
  ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ioreq.h \
  ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc/usbd_ctlreq.h \
- ../Core/Inc/MPU6050.h ../Core/Inc/I2Cdev.h ../Core/Inc/main.h \
- ../Core/Inc/helper_3dmath.h ../Core/Inc/motorControl.h \
- ../Core/Inc/SBUS.h
+ ../Core/Inc/MPU6050.h ../Core/Inc/human_interface.h ../Core/Inc/main.h \
+ ../Core/Inc/I2Cdev.h ../Core/Inc/helper_3dmath.h \
+ ../Core/Inc/motorControl.h ../Core/Inc/SBUS.h \
+ ../Core/Inc/human_interface.h
 
 ../Core/Inc/main.h:
 
@@ -138,12 +139,16 @@ Core/Src/main.o: ../Core/Src/main.cpp ../Core/Inc/main.h \
 
 ../Core/Inc/MPU6050.h:
 
-../Core/Inc/I2Cdev.h:
+../Core/Inc/human_interface.h:
 
 ../Core/Inc/main.h:
+
+../Core/Inc/I2Cdev.h:
 
 ../Core/Inc/helper_3dmath.h:
 
 ../Core/Inc/motorControl.h:
 
 ../Core/Inc/SBUS.h:
+
+../Core/Inc/human_interface.h:

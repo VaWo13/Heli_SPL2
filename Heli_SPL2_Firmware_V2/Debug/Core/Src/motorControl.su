@@ -1,9 +1,9 @@
-motorControl.cpp:35:6:void updateMainMotorSpeed()	40	static
-motorControl.cpp:85:6:void MainMotorDLPF()	16	static
-motorControl.cpp:97:6:void updateTailMotorSpeed()	8	static
-motorControl.cpp:118:6:void getMainMotorSpeed()	24	static
-motorControl.cpp:136:6:void getMainMotorOffset()	32	static
-motorControl.cpp:148:6:void PPM_init()	8	static
-motorControl.cpp:162:6:void ESCCalibration()	16	static
-motorControl.cpp:205:1:void __static_initialization_and_destruction_0(int, int)	16	static
-motorControl.cpp:205:1:cpp)	8	static
+motorControl.cpp:43:6:void updateMainMotorSpeed()	32	static
+motorControl.cpp:97:6:void MainMotorDLPF()	16	static
+motorControl.cpp:109:6:void updateTailMotorSpeed()	8	static
+motorControl.cpp:132:6:void getMainMotorSpeed()	32	static
+motorControl.cpp:161:6:void getMainMotorOffset()	32	static
+motorControl.cpp:173:6:void PPM_init()	8	static
+motorControl.cpp:187:6:void ESCCalibration()	16	static
+motorControl.cpp:233:1:void __static_initialization_and_destruction_0(int, int)	16	static
+motorControl.cpp:233:1:cpp)	8	static
